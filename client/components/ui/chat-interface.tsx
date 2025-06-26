@@ -7,6 +7,7 @@ import {
   ModelsResponse,
   ConversationsResponse,
 } from "@shared/api";
+import { api } from "@/lib/api";
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
 import { ChatInput } from "./chat-input";
@@ -58,26 +59,23 @@ export function ChatInterface() {
 
   const loadConversations = async () => {
     try {
-      console.log("Loading conversations from:", "/api/conversations");
-      const response = await fetch("/api/conversations");
-      console.log("Conversations response:", response.status, response.ok);
-      const data: ConversationsResponse = await response.json();
+      console.log("Chargement des conversations...");
+      const data = await api.getConversations();
       setConversations(data.conversations);
+      console.log("Conversations chargées:", data.conversations.length);
     } catch (error) {
-      console.error("Failed to load conversations:", error);
+      console.error("Échec du chargement des conversations:", error);
     }
   };
 
   const loadModels = async () => {
     try {
-      console.log("Loading models from:", "/api/models");
-      const response = await fetch("/api/models");
-      console.log("Models response:", response.status, response.ok);
-      const data: ModelsResponse = await response.json();
+      console.log("Chargement des modèles...");
+      const data = await api.getModels();
       setModels(data.models);
-      console.log("Loaded models:", data.models.length);
+      console.log("Modèles chargés:", data.models.length);
     } catch (error) {
-      console.error("Failed to load models:", error);
+      console.error("Échec du chargement des modèles:", error);
     }
   };
 
@@ -87,51 +85,25 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const chatRequest: ChatRequest = {
+      const chatRequest = {
         message,
         conversationId: currentConversation?.id,
         model: selectedModel,
       };
 
-      console.log(
-        "Envoi de la requête chat vers:",
-        "/api/chat",
-        "avec données:",
-        chatRequest,
-      );
+      console.log("Envoi du message...", chatRequest);
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(chatRequest),
-      });
-
-      console.log("Réponse chat:", response.status, response.ok);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Erreur réponse chat:", errorText);
-        throw new Error(
-          `Échec de l'envoi du message: ${response.status} ${errorText}`,
-        );
-      }
-
-      const data: ChatResponse = await response.json();
-      console.log("Données reçues:", data);
+      // Envoyer le message via la nouvelle API
+      const data = await api.sendMessage(chatRequest);
+      console.log("Réponse reçue:", data);
 
       // Charger la conversation complète depuis le serveur
-      const convResponse = await fetch(
-        `/api/conversations/${data.conversationId}`,
-      );
-
-      if (convResponse.ok) {
-        const conversation: Conversation = await convResponse.json();
+      try {
+        const conversation = await api.getConversation(data.conversationId);
         setCurrentConversation(conversation);
         console.log("Conversation mise à jour:", conversation);
-      } else {
-        console.error("Échec du chargement de la conversation");
+      } catch (convError) {
+        console.error("Échec du chargement de la conversation:", convError);
       }
 
       // Recharger la liste des conversations
