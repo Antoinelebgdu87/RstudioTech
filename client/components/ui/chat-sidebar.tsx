@@ -51,7 +51,7 @@ export function ChatSidebar({
             <h1 className="font-semibold text-sidebar-foreground">
               RStudio Tech
             </h1>
-            <p className="text-xs text-sidebar-foreground/60">AI Assistant</p>
+            <p className="text-xs text-sidebar-foreground/60">Assistant IA</p>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ export function ChatSidebar({
           className="w-full justify-start gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           <PlusIcon className="w-4 h-4" />
-          New Chat
+          Nouveau Chat
         </Button>
       </div>
 
@@ -75,7 +75,7 @@ export function ChatSidebar({
             <SettingsIcon className="w-4 h-4" />
             <span className="text-sm">
               {models.find((m) => m.id === selectedModel)?.name ||
-                "Select Model"}
+                "Sélectionner un Modèle"}
             </span>
           </div>
         </Button>
@@ -116,7 +116,7 @@ export function ChatSidebar({
       <div className="flex-1 overflow-hidden">
         <div className="p-4 pb-2">
           <h3 className="text-sm font-medium text-sidebar-foreground/80">
-            Recent Chats
+            Chats Récents
           </h3>
         </div>
         <ScrollArea className="flex-1 px-4">
@@ -125,7 +125,7 @@ export function ChatSidebar({
               <div className="text-center py-8">
                 <MessageSquareIcon className="w-8 h-8 mx-auto text-sidebar-foreground/40 mb-2" />
                 <p className="text-sm text-sidebar-foreground/60">
-                  No conversations yet
+                  Aucune conversation pour le moment
                 </p>
               </div>
             ) : (
@@ -166,9 +166,9 @@ export function ChatSidebar({
         <div className="text-xs text-sidebar-foreground/60 text-center">
           <div className="flex items-center justify-center gap-1 mb-1">
             <div className="w-2 h-2 rounded-full bg-green-400"></div>
-            <span>All features FREE</span>
+            <span>Toutes les fonctionnalités GRATUITES</span>
           </div>
-          <p>Powered by OpenRouter</p>
+          <p>Propulsé par OpenRouter</p>
         </div>
       </div>
     </div>
