@@ -82,6 +82,37 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
+      // Create user message immediately for optimistic updates
+      const userMessage: ChatMessageType = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: message,
+        timestamp: Date.now(),
+      };
+
+      // If no current conversation, create a temporary one for immediate UI update
+      if (!currentConversation) {
+        const tempConversation: Conversation = {
+          id: `temp-${Date.now()}`,
+          title: message.slice(0, 50) + (message.length > 50 ? "..." : ""),
+          messages: [userMessage],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        setCurrentConversation(tempConversation);
+      } else {
+        // Add user message to existing conversation
+        setCurrentConversation((prev) =>
+          prev
+            ? {
+                ...prev,
+                messages: [...prev.messages, userMessage],
+                updatedAt: Date.now(),
+              }
+            : null,
+        );
+      }
+
       const chatRequest: ChatRequest = {
         message,
         conversationId: currentConversation?.id,
@@ -102,30 +133,12 @@ export function ChatInterface() {
 
       const data: ChatResponse = await response.json();
 
-      // Update current conversation
-      if (currentConversation?.id === data.conversationId) {
-        // Add both user and assistant messages
-        const userMessage: ChatMessageType = {
-          id: `user-${Date.now()}`,
-          role: "user",
-          content: message,
-          timestamp: Date.now(),
-        };
+      // Load the complete conversation from the server
+      const convResponse = await fetch(
+        `/api/conversations/${data.conversationId}`,
+      );
 
-        setCurrentConversation((prev) =>
-          prev
-            ? {
-                ...prev,
-                messages: [...prev.messages, userMessage, data.message],
-                updatedAt: Date.now(),
-              }
-            : null,
-        );
-      } else {
-        // Load the new/updated conversation
-        const convResponse = await fetch(
-          `/api/conversations/${data.conversationId}`,
-        );
+      if (convResponse.ok) {
         const conversation: Conversation = await convResponse.json();
         setCurrentConversation(conversation);
       }
@@ -134,6 +147,17 @@ export function ChatInterface() {
       loadConversations();
     } catch (error) {
       console.error("Error sending message:", error);
+      // Remove the optimistic user message on error
+      if (currentConversation) {
+        setCurrentConversation((prev) =>
+          prev
+            ? {
+                ...prev,
+                messages: prev.messages.slice(0, -1), // Remove last message (the user message)
+              }
+            : null,
+        );
+      }
     } finally {
       setIsLoading(false);
     }
