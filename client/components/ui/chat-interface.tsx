@@ -7,7 +7,7 @@ import {
   ModelsResponse,
   ConversationsResponse,
 } from "@shared/api";
-import { api } from "@/lib/api";
+
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
 import { ChatInput } from "./chat-input";
@@ -60,7 +60,9 @@ export function ChatInterface() {
   const loadConversations = async () => {
     try {
       console.log("Chargement des conversations...");
-      const data = await api.getConversations();
+      const response = await fetch("/api/conversations");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
       setConversations(data.conversations);
       console.log("Conversations chargées:", data.conversations.length);
     } catch (error) {
@@ -71,7 +73,9 @@ export function ChatInterface() {
   const loadModels = async () => {
     try {
       console.log("Chargement des modèles...");
-      const data = await api.getModels();
+      const response = await fetch("/api/models");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
       setModels(data.models);
       console.log("Modèles chargés:", data.models.length);
     } catch (error) {
@@ -93,15 +97,27 @@ export function ChatInterface() {
 
       console.log("Envoi du message...", chatRequest);
 
-      // Envoyer le message via la nouvelle API
-      const data = await api.sendMessage(chatRequest);
+      // Envoyer le message
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(chatRequest),
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
       console.log("Réponse reçue:", data);
 
       // Charger la conversation complète depuis le serveur
       try {
-        const conversation = await api.getConversation(data.conversationId);
-        setCurrentConversation(conversation);
-        console.log("Conversation mise à jour:", conversation);
+        const convResponse = await fetch(
+          `/api/conversations/${data.conversationId}`,
+        );
+        if (convResponse.ok) {
+          const conversation = await convResponse.json();
+          setCurrentConversation(conversation);
+          console.log("Conversation mise à jour:", conversation);
+        }
       } catch (convError) {
         console.error("Échec du chargement de la conversation:", convError);
       }
@@ -143,7 +159,11 @@ export function ChatInterface() {
 
   const handleNewConversation = async () => {
     try {
-      const newConversation = await api.newConversation();
+      const response = await fetch("/api/conversations/new", {
+        method: "POST",
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const newConversation = await response.json();
       setCurrentConversation(newConversation);
       setConversations((prev) => [newConversation, ...prev]);
     } catch (error) {
@@ -153,7 +173,9 @@ export function ChatInterface() {
 
   const handleSelectConversation = async (id: string) => {
     try {
-      const conversation = await api.getConversation(id);
+      const response = await fetch(`/api/conversations/${id}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const conversation = await response.json();
       setCurrentConversation(conversation);
     } catch (error) {
       console.error("Échec du chargement de la conversation:", error);
@@ -162,9 +184,12 @@ export function ChatInterface() {
 
   const handleDeleteConversation = async (id: string) => {
     try {
-      await api.deleteConversation(id);
-      setConversations((prev) => prev.filter((conv) => conv.id !== id));
+      const response = await fetch(`/api/conversations/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
+      setConversations((prev) => prev.filter((conv) => conv.id !== id));
       if (currentConversation?.id === id) {
         setCurrentConversation(null);
       }
@@ -176,7 +201,9 @@ export function ChatInterface() {
   const testAPI = async () => {
     try {
       console.log("Test de connectivité API...");
-      const data = await api.test();
+      const response = await fetch("/api/test");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
       console.log("Données du test API:", data);
       alert(`Test API RÉUSSI: ${JSON.stringify(data)}`);
     } catch (error) {
