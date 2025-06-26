@@ -359,14 +359,15 @@ export function ChatInterface() {
               <MenuIcon className="w-4 h-4" />
             </Button>
             <h2 className="font-semibold truncate">
-              {currentConversation?.title || "RStudio Tech AI"}
+              {currentConversation?.title || "RStudio Tech IA"}
             </h2>
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
               <div className="w-2 h-2 rounded-full bg-green-400"></div>
               <span>
-                {models.find((m) => m.id === selectedModel)?.name || "AI Model"}
+                {models.find((m) => m.id === selectedModel)?.name ||
+                  "Modèle IA"}
               </span>
             </div>
           </div>
