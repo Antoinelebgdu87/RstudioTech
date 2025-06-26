@@ -31,6 +31,12 @@ app.get("/api/test", (req, res) => {
 app.get("/api/models", (req, res) => {
   const models = [
     {
+      id: "mistralai/mistral-small-3.2-24b-instruct:free",
+      name: "Mistral Small 3.2",
+      description: "Modèle 24B de Mistral pour tâches complexes",
+      free: true,
+    },
+    {
       id: "deepseek/deepseek-r1-0528:free",
       name: "DeepSeek R1",
       description: "Modèle de raisonnement avancé de DeepSeek",
@@ -46,12 +52,6 @@ app.get("/api/models", (req, res) => {
       id: "qwen/qwen3-14b:free",
       name: "Qwen 3 14B",
       description: "Modèle plus puissant 14B d'Alibaba",
-      free: true,
-    },
-    {
-      id: "mistralai/devstral-small:free",
-      name: "Devstral Small",
-      description: "Modèle de développement axé code de Mistral",
       free: true,
     },
     {
@@ -110,7 +110,7 @@ app.post("/api/chat", async (req, res) => {
     const {
       message,
       conversationId,
-      model = "deepseek/deepseek-r1-0528:free",
+      model = "mistralai/mistral-small-3.2-24b-instruct:free",
     } = req.body;
 
     console.log("Chat request:", { message, conversationId, model });

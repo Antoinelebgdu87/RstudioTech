@@ -37,7 +37,7 @@ export function ChatInterface() {
     }>
   >([]);
   const [selectedModel, setSelectedModel] = useState(
-    "deepseek/deepseek-r1-0528:free",
+    "mistralai/mistral-small-3.2-24b-instruct:free",
   );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
