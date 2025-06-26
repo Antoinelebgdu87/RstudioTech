@@ -55,7 +55,7 @@ export const handleChat: RequestHandler = async (req, res) => {
     const {
       message,
       conversationId,
-      model = "microsoft/phi-3-mini-128k-instruct:free",
+      model = "meta-llama/llama-3-8b-instruct:free",
     }: ChatRequest = req.body;
 
     if (!message) {
