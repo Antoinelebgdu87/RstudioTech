@@ -24,11 +24,16 @@ export function ChatInput({
 
   const handleSend = () => {
     if (message.trim() && !isLoading && !disabled) {
-      onSendMessage(message.trim());
+      // Nettoyer immédiatement l'input pour une sensation plus réactive
+      const messageToSend = message.trim();
       setMessage("");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
+        textareaRef.current.focus(); // Garder le focus pour continuer à taper
       }
+
+      // Envoyer le message après nettoyage
+      onSendMessage(messageToSend);
     }
   };
 
@@ -97,9 +102,13 @@ export function ChatInput({
           <div className="flex gap-4">
             <span>Entrée pour envoyer, Maj+Entrée pour nouvelle ligne</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-green-400"></div>
-            <span>Utilisation illimitée gratuite</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span>Réponses rapides</span>
+            </div>
+            <span>•</span>
+            <span>Gratuit illimité</span>
           </div>
         </div>
       </div>
