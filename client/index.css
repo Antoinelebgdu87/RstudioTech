@@ -2,63 +2,114 @@
 
 @plugin 'tailwindcss-animate';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
-  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(222.2 84% 4.9%);
+  /* RStudio Tech Dark Theme */
+  --background: hsl(210 11% 9%);
+  --foreground: hsl(210 9% 98%);
 
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222.2 84% 4.9%);
+  --card: hsl(210 11% 11%);
+  --card-foreground: hsl(210 9% 98%);
 
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(222.2 84% 4.9%);
+  --popover: hsl(210 11% 11%);
+  --popover-foreground: hsl(210 9% 98%);
 
-  --primary: hsl(222.2 47.4% 11.2%);
-  --primary-foreground: hsl(210 40% 98%);
+  --primary: hsl(262 83% 58%);
+  --primary-foreground: hsl(210 9% 98%);
 
-  --secondary: hsl(210 40% 96.1%);
-  --secondary-foreground: hsl(222.2 47.4% 11.2%);
+  --secondary: hsl(210 11% 15%);
+  --secondary-foreground: hsl(210 9% 98%);
 
-  --muted: hsl(210 40% 96.1%);
-  --muted-foreground: hsl(215.4 16.3% 46.9%);
+  --muted: hsl(210 11% 15%);
+  --muted-foreground: hsl(210 9% 60%);
 
-  --accent: hsl(210 40% 96.1%);
-  --accent-foreground: hsl(222.2 47.4% 11.2%);
+  --accent: hsl(210 11% 15%);
+  --accent-foreground: hsl(210 9% 98%);
 
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(210 40% 98%);
+  --destructive: hsl(0 62% 56%);
+  --destructive-foreground: hsl(210 9% 98%);
 
-  --border: hsl(214.3 31.8% 91.4%);
-  --input: hsl(214.3 31.8% 91.4%);
-  --ring: hsl(222.2 84% 4.9%);
+  --border: hsl(210 11% 20%);
+  --input: hsl(210 11% 15%);
+  --ring: hsl(262 83% 58%);
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
-  --sidebar-background: hsl(0 0% 98%);
+  --sidebar-background: hsl(210 11% 7%);
+  --sidebar-foreground: hsl(210 9% 85%);
+  --sidebar-primary: hsl(262 83% 58%);
+  --sidebar-primary-foreground: hsl(210 9% 98%);
+  --sidebar-accent: hsl(210 11% 12%);
+  --sidebar-accent-foreground: hsl(210 9% 98%);
+  --sidebar-border: hsl(210 11% 20%);
+  --sidebar-ring: hsl(262 83% 58%);
 
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-
-  --sidebar-primary: hsl(240 5.9% 10%);
-
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-
-  --sidebar-border: hsl(220 13% 91%);
-
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  /* Chat specific colors */
+  --chat-bubble-user: hsl(262 83% 58%);
+  --chat-bubble-assistant: hsl(210 11% 15%);
+  --chat-input: hsl(210 11% 11%);
+  --brand-accent: hsl(300 76% 58%);
+  --brand-secondary: hsl(176 58% 58%);
 }
 
 @utility container {
   margin-inline: auto;
   padding-inline: 2rem;
+}
+
+/* Global dark theme enforcement */
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Code block styling */
+pre {
+  background: hsl(var(--muted)) !important;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+code {
+  background: hsl(var(--muted));
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
 }
