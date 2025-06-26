@@ -498,7 +498,22 @@ export function ChatInterface() {
 
         {/* Messages Area */}
         <div className="flex-1 flex flex-col min-h-0">
-          {!currentConversation || currentConversation.messages.length === 0 ? (
+          {isCheckingAPI ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-brand-accent flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <h2 className="text-xl font-semibold mb-2">
+                  Initialisation...
+                </h2>
+                <p className="text-muted-foreground">
+                  Vérification de la connectivité
+                </p>
+              </div>
+            </div>
+          ) : !currentConversation ||
+            currentConversation.messages.length === 0 ? (
             <EmptyState />
           ) : (
             <ScrollArea className="flex-1">
