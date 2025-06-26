@@ -16,36 +16,36 @@ const OPENROUTER_API_KEY =
   "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
-// Free models available on OpenRouter
+// Modèles gratuits disponibles sur OpenRouter
 const FREE_MODELS = [
   {
     id: "mistralai/mistral-small-3.2-24b-instruct:free",
     name: "Mistral Small 3.2",
-    description: "Mistral's 24B parameter model for complex tasks",
+    description: "Modèle 24B de Mistral pour les tâches complexes",
     free: true,
   },
   {
     id: "deepseek/deepseek-r1-0528:free",
     name: "DeepSeek R1",
-    description: "DeepSeek's advanced reasoning model",
+    description: "Modèle de raisonnement avancé de DeepSeek",
     free: true,
   },
   {
     id: "qwen/qwen3-8b:free",
     name: "Qwen 3 8B",
-    description: "Alibaba's efficient 8B parameter model",
+    description: "Modèle efficace 8B d'Alibaba",
     free: true,
   },
   {
     id: "qwen/qwen3-14b:free",
     name: "Qwen 3 14B",
-    description: "Alibaba's more powerful 14B parameter model",
+    description: "Modèle plus puissant 14B d'Alibaba",
     free: true,
   },
   {
     id: "mistralai/devstral-small:free",
     name: "Devstral Small",
-    description: "Mistral's code-focused development model",
+    description: "Modèle de développement axé code de Mistral",
     free: true,
   },
 ];
@@ -194,7 +194,7 @@ export const handleDeleteConversation: RequestHandler = (req, res) => {
 export const handleNewConversation: RequestHandler = (_req, res) => {
   const newConversation: Conversation = {
     id: uuidv4(),
-    title: "New Chat",
+    title: "Nouveau Chat",
     messages: [],
     createdAt: Date.now(),
     updatedAt: Date.now(),
