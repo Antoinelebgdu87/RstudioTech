@@ -14,6 +14,9 @@ const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 app.use(cors());
 app.use(express.json());
 
+// Servir les fichiers statiques React
+app.use(express.static(path.join(__dirname, "dist/spa")));
+
 // Simple storage
 const conversations = new Map();
 
@@ -209,6 +212,16 @@ C'est une question intéressante ! Je peux vous proposer des solutions adaptées
     console.error("❌ Erreur chat:", error);
     res.status(500).json({ error: "Erreur interne" });
   }
+});
+
+// Catch-all handler pour React Router (doit être APRÈS les routes API)
+app.get("*", (req, res) => {
+  // Ne pas servir index.html pour les routes API
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({ error: "API endpoint not found" });
+  }
+
+  res.sendFile(path.join(__dirname, "dist/spa/index.html"));
 });
 
 app.listen(port, () => {
