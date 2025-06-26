@@ -133,13 +133,28 @@ export function ChatInterface() {
       // Envoyer le message au serveur
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify(chatRequest),
       });
 
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers.get("content-type"));
+
       if (!response.ok) {
         const errorText = await response.text();
+        console.error("Response error text:", errorText);
         throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+      }
+
+      // Vérifier que la réponse est bien du JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const responseText = await response.text();
+        console.error("Response is not JSON:", responseText);
+        throw new Error("La réponse du serveur n'est pas du JSON valide");
       }
 
       const data = await response.json();
