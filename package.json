@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\" --names \"API,CLIENT\" --prefix-colors \"blue,green\"",
+    "dev": "node server-integrated.cjs",
     "dev:client": "vite",
     "dev:api": "node server-simple.cjs",
     "build": "npm run build:client && npm run build:server",

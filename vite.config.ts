@@ -6,14 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig(() => ({
   server: {
     host: "::",
-    port: 3000,
-    proxy: {
-      "/api": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    port: 5173, // Port différent pour éviter les conflits
   },
   build: {
     outDir: "dist/spa",
