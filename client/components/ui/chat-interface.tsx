@@ -260,15 +260,27 @@ export function ChatInterface() {
 
   const handleNewConversation = async () => {
     try {
-      const response = await fetch("/api/conversations/new", {
-        method: "POST",
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const newConversation = await response.json();
+      let newConversation;
+
+      if (apiAvailable) {
+        const response = await fetch("/api/conversations/new", {
+          method: "POST",
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        newConversation = await response.json();
+      } else {
+        // Mode démonstration
+        newConversation = apiFallback.createNewConversation();
+      }
+
       setCurrentConversation(newConversation);
       setConversations((prev) => [newConversation, ...prev]);
     } catch (error) {
       console.error("Échec de la création d'une nouvelle conversation:", error);
+      // Fallback en cas d'erreur
+      const newConversation = apiFallback.createNewConversation();
+      setCurrentConversation(newConversation);
+      setConversations((prev) => [newConversation, ...prev]);
     }
   };
 
