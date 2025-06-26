@@ -1,46 +1,24 @@
 /**
- * Utilitaire robuste pour les appels d'API
+ * Utilitaire simple pour les appels d'API
  */
 
-// Configuration de base pour les appels d'API
-const API_BASE_URL = ""; // URL relative pour Vite dev server
-const DEFAULT_TIMEOUT = 30000; // 30 secondes
-
-// Interface pour les options de requête
-interface ApiRequestOptions extends RequestInit {
-  timeout?: number;
-}
-
 /**
- * Fonction fetch robuste avec timeout et gestion d'erreurs
+ * Fonction fetch simple sans timeout compliqué
  */
 export async function apiRequest<T>(
   endpoint: string,
-  options: ApiRequestOptions = {},
+  options: RequestInit = {},
 ): Promise<T> {
-  const { timeout = DEFAULT_TIMEOUT, ...fetchOptions } = options;
-
-  // Créer un AbortController pour le timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
   try {
-    console.log(`[API] Requête vers: ${API_BASE_URL}${endpoint}`);
-    console.log(`[API] Options:`, {
-      ...fetchOptions,
-      signal: controller.signal,
-    });
+    console.log(`[API] Requête vers: ${endpoint}`);
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...fetchOptions,
-      signal: controller.signal,
+    const response = await fetch(endpoint, {
+      ...options,
       headers: {
         "Content-Type": "application/json",
-        ...fetchOptions.headers,
+        ...options.headers,
       },
     });
-
-    clearTimeout(timeoutId);
 
     console.log(`[API] Réponse reçue:`, response.status, response.statusText);
 
@@ -55,19 +33,8 @@ export async function apiRequest<T>(
 
     return data;
   } catch (error) {
-    clearTimeout(timeoutId);
-
-    if (error instanceof Error) {
-      if (error.name === "AbortError") {
-        console.error("[API] Timeout de la requête");
-        throw new Error("La requête a pris trop de temps (timeout)");
-      }
-      console.error("[API] Erreur:", error.message);
-      throw error;
-    }
-
-    console.error("[API] Erreur inconnue:", error);
-    throw new Error("Erreur inconnue lors de la requête API");
+    console.error("[API] Erreur:", error);
+    throw error;
   }
 }
 
