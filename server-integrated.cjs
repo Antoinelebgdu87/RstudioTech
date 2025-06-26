@@ -27,9 +27,6 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Servir les fichiers statiques React
-app.use(express.static(path.join(__dirname, "dist/spa")));
-
 // Simple storage
 const conversations = new Map();
 
