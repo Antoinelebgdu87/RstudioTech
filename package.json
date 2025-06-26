@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\" --names \"API,CLIENT\" --prefix-colors \"blue,green\"",
+    "dev": "vite",
     "dev:client": "vite",
     "dev:api": "tsx server/standalone.ts",
     "build": "npm run build:client && npm run build:server",
