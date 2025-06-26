@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\" --names \"API,CLIENT\" --prefix-colors \"blue,green\"",
     "dev:client": "vite",
-    "dev:api": "node server-simple.js",
+    "dev:api": "node server-simple.cjs",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
