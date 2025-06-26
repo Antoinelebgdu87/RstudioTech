@@ -31,15 +31,21 @@ app.get("/api/models", (req, res) => {
   res.json({
     models: [
       {
-        id: "mistralai/mistral-small-3.2-24b-instruct:free",
-        name: "Mistral Small 3.2",
-        description: "Modèle avancé de Mistral pour tâches complexes",
+        id: "qwen/qwen3-8b:free",
+        name: "Qwen 3 8B ⚡",
+        description: "Modèle ultra-rapide et intelligent",
         free: true,
       },
       {
-        id: "local-ai",
-        name: "RStudio IA Local",
-        description: "Assistant IA intelligent et rapide",
+        id: "mistralai/devstral-small:free",
+        name: "Devstral Small 💻",
+        description: "Spécialisé en programmation",
+        free: true,
+      },
+      {
+        id: "qwen/qwen3-14b:free",
+        name: "Qwen 3 14B 🧠",
+        description: "Plus puissant pour tâches complexes",
         free: true,
       },
     ],
@@ -135,10 +141,10 @@ app.post("/api/chat", async (req, res) => {
           "X-Title": "RStudio Tech AI",
         },
         body: JSON.stringify({
-          model: "mistralai/mistral-small-3.2-24b-instruct:free",
+          model: "qwen/qwen3-8b:free", // Modèle plus rapide et plus léger
           messages: messages,
-          temperature: 0.5, // Réduire pour des réponses plus cohérentes et rapides
-          max_tokens: 800, // Réduire pour des réponses plus courtes et rapides
+          temperature: 0.3, // Plus bas pour des réponses rapides
+          max_tokens: 500, // Plus court pour des réponses ultra-rapides
           stream: false,
         }),
       });

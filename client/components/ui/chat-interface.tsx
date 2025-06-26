@@ -37,9 +37,7 @@ export function ChatInterface() {
       free: boolean;
     }>
   >([]);
-  const [selectedModel, setSelectedModel] = useState(
-    "mistralai/mistral-small-3.2-24b-instruct:free",
-  );
+  const [selectedModel, setSelectedModel] = useState("qwen/qwen3-8b:free");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -147,20 +145,21 @@ export function ChatInterface() {
       const data = await response.json();
       console.log("Réponse reçue:", data);
 
-      // Charger la conversation complète depuis le serveur
-      const convResponse = await fetch(
-        `/api/conversations/${data.conversationId}`,
-      );
-      if (convResponse.ok) {
-        const conversation = await convResponse.json();
-        setCurrentConversation(conversation);
-        console.log("Conversation mise à jour:", conversation);
-
-        // Scroll vers le bas après avoir reçu la réponse
-        setTimeout(scrollToBottom, 100);
-      } else {
-        console.error("Échec du chargement de la conversation");
+      // Ajouter directement la réponse IA à la conversation courante
+      if (currentConversation) {
+        setCurrentConversation((prev) =>
+          prev
+            ? {
+                ...prev,
+                messages: [...prev.messages, data.message],
+                updatedAt: Date.now(),
+              }
+            : null,
+        );
       }
+
+      // Scroll vers le bas après avoir reçu la réponse
+      setTimeout(scrollToBottom, 100);
 
       // Recharger la liste des conversations en arrière-plan
       loadConversations();
