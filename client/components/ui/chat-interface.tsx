@@ -89,6 +89,37 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
+      // Créer un message utilisateur immédiatement pour l'affichage optimiste
+      const userMessage: ChatMessageType = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: message,
+        timestamp: Date.now(),
+      };
+
+      // Si pas de conversation courante, créer une temporaire pour l'affichage
+      if (!currentConversation) {
+        const tempConversation: Conversation = {
+          id: `temp-${Date.now()}`,
+          title: message.slice(0, 50) + (message.length > 50 ? "..." : ""),
+          messages: [userMessage],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        setCurrentConversation(tempConversation);
+      } else {
+        // Ajouter le message à la conversation existante
+        setCurrentConversation((prev) =>
+          prev
+            ? {
+                ...prev,
+                messages: [...prev.messages, userMessage],
+                updatedAt: Date.now(),
+              }
+            : null,
+        );
+      }
+
       const chatRequest = {
         message,
         conversationId: currentConversation?.id,
@@ -97,29 +128,31 @@ export function ChatInterface() {
 
       console.log("Envoi du message...", chatRequest);
 
-      // Envoyer le message
+      // Envoyer le message au serveur
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(chatRequest),
       });
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
+      }
+
       const data = await response.json();
       console.log("Réponse reçue:", data);
 
       // Charger la conversation complète depuis le serveur
-      try {
-        const convResponse = await fetch(
-          `/api/conversations/${data.conversationId}`,
-        );
-        if (convResponse.ok) {
-          const conversation = await convResponse.json();
-          setCurrentConversation(conversation);
-          console.log("Conversation mise à jour:", conversation);
-        }
-      } catch (convError) {
-        console.error("Échec du chargement de la conversation:", convError);
+      const convResponse = await fetch(
+        `/api/conversations/${data.conversationId}`,
+      );
+      if (convResponse.ok) {
+        const conversation = await convResponse.json();
+        setCurrentConversation(conversation);
+        console.log("Conversation mise à jour:", conversation);
+      } else {
+        console.error("Échec du chargement de la conversation");
       }
 
       // Recharger la liste des conversations
