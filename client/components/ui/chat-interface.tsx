@@ -296,9 +296,18 @@ export function ChatInterface() {
           utilisation illimitée et gratuite.
         </p>
 
-        <Button onClick={testAPI} variant="outline" className="mb-8">
-          🔧 Tester la Connexion API
-        </Button>
+        <div className="flex gap-2 mb-8">
+          <Button onClick={testAPI} variant="outline">
+            🔧 Tester API
+          </Button>
+          <Button
+            onClick={() => handleSendMessage("Bonjour ! Test de connexion.")}
+            variant="default"
+            disabled={isLoading}
+          >
+            {isLoading ? "🔄 Test en cours..." : "💬 Test Message"}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
