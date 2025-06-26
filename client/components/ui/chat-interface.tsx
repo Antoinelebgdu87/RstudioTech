@@ -218,6 +218,22 @@ export function ChatInterface() {
     }
   };
 
+  const testAPI = async () => {
+    try {
+      console.log("Testing API connectivity...");
+      const response = await fetch("/api/test");
+      console.log("API test response:", response.status, response.ok);
+      const data = await response.json();
+      console.log("API test data:", data);
+      alert(
+        `API test ${response.ok ? "SUCCESS" : "FAILED"}: ${JSON.stringify(data)}`,
+      );
+    } catch (error) {
+      console.error("API test failed:", error);
+      alert(`API test FAILED: ${error}`);
+    }
+  };
+
   const EmptyState = () => (
     <div className="flex-1 flex items-center justify-center">
       <div className="text-center max-w-2xl mx-auto p-8">
@@ -231,6 +247,10 @@ export function ChatInterface() {
           Your free AI assistant with premium features. No limits, no
           subscriptions.
         </p>
+
+        <Button onClick={testAPI} variant="outline" className="mb-8">
+          🔧 Test API Connection
+        </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
