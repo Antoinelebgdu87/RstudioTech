@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 const conversations: Map<string, Conversation> = new Map();
 
 const OPENROUTER_API_KEY =
-  "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";
+  "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
 // Modèles gratuits disponibles sur OpenRouter
