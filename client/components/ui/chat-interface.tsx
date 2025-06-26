@@ -11,6 +11,7 @@ import {
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
 import { ChatInput } from "./chat-input";
+import { TypingIndicator } from "./typing-indicator";
 import { ScrollArea } from "./scroll-area";
 import { Button } from "./button";
 import {
@@ -120,6 +121,9 @@ export function ChatInterface() {
         );
       }
 
+      // Scroll vers le bas pour voir l'indicateur de frappe
+      scrollToBottom();
+
       const chatRequest = {
         message,
         conversationId: currentConversation?.id,
@@ -151,12 +155,15 @@ export function ChatInterface() {
         const conversation = await convResponse.json();
         setCurrentConversation(conversation);
         console.log("Conversation mise à jour:", conversation);
+
+        // Scroll vers le bas après avoir reçu la réponse
+        setTimeout(scrollToBottom, 100);
       } else {
         console.error("Échec du chargement de la conversation");
       }
 
-      // Recharger la liste des conversations
-      await loadConversations();
+      // Recharger la liste des conversations en arrière-plan
+      loadConversations();
     } catch (error) {
       console.error("Erreur lors de l'envoi du message:", error);
 
@@ -171,7 +178,7 @@ export function ChatInterface() {
         const errorChatMessage: ChatMessageType = {
           id: `error-${Date.now()}`,
           role: "assistant",
-          content: `❌ **Erreur**: ${errorMessage}\n\nVeuillez réessayer dans quelques instants.`,
+          content: `❌ **Connexion temporairement interrompue**\n\n${errorMessage}\n\n🔄 Veuillez réessayer dans quelques instants.`,
           timestamp: Date.now(),
         };
 
@@ -184,6 +191,9 @@ export function ChatInterface() {
               }
             : null,
         );
+
+        // Scroll vers le message d'erreur
+        setTimeout(scrollToBottom, 100);
       }
     } finally {
       setIsLoading(false);
@@ -417,6 +427,7 @@ export function ChatInterface() {
                 {currentConversation.messages.map((message) => (
                   <ChatMessage key={message.id} message={message} />
                 ))}
+                {isLoading && <TypingIndicator />}
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>

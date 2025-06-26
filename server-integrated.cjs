@@ -137,8 +137,8 @@ app.post("/api/chat", async (req, res) => {
         body: JSON.stringify({
           model: "mistralai/mistral-small-3.2-24b-instruct:free",
           messages: messages,
-          temperature: 0.7,
-          max_tokens: 2048,
+          temperature: 0.5, // Réduire pour des réponses plus cohérentes et rapides
+          max_tokens: 800, // Réduire pour des réponses plus courtes et rapides
           stream: false,
         }),
       });
