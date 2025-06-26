@@ -5,10 +5,17 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Nouvelle clé API OpenRouter
+// Configuration OpenRouter depuis les variables d'environnement
 const OPENROUTER_API_KEY =
+  process.env.OPENROUTER_API_KEY ||
   "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";
-const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+const OPENROUTER_BASE_URL =
+  process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+console.log(`🌍 Environnement: ${NODE_ENV}`);
+console.log(`🔑 Clé API configurée: ${OPENROUTER_API_KEY ? "Oui" : "Non"}`);
+console.log(`📡 URL OpenRouter: ${OPENROUTER_BASE_URL}`);
 
 // Middleware - L'ordre est important !
 app.use(
