@@ -52,11 +52,21 @@ const FREE_MODELS = [
 
 export const handleChat: RequestHandler = async (req, res) => {
   try {
+    console.log("=== CHAT REQUEST ===");
+    console.log("Body:", req.body);
+    console.log("API Key available:", OPENROUTER_API_KEY ? "YES" : "NO");
+    console.log(
+      "API Key prefix:",
+      OPENROUTER_API_KEY?.substring(0, 15) + "...",
+    );
+
     const {
       message,
       conversationId,
       model = "deepseek/deepseek-r1-0528:free",
     }: ChatRequest = req.body;
+
+    console.log("Parsed request:", { message, conversationId, model });
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
