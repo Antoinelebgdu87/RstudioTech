@@ -36,7 +36,7 @@ export function ChatInterface() {
     }>
   >([]);
   const [selectedModel, setSelectedModel] = useState(
-    "microsoft/phi-3-mini-128k-instruct:free",
+    "meta-llama/llama-3-8b-instruct:free",
   );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
