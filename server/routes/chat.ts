@@ -96,6 +96,21 @@ export const handleChat: RequestHandler = async (req, res) => {
     }));
 
     // Call OpenRouter API
+    const requestBody = {
+      model: model,
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 2048,
+      stream: false,
+    };
+
+    console.log("OpenRouter request:", {
+      url: `${OPENROUTER_BASE_URL}/chat/completions`,
+      model: model,
+      messagesCount: messages.length,
+      apiKeyPrefix: OPENROUTER_API_KEY.substring(0, 15) + "...",
+    });
+
     const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
@@ -105,13 +120,7 @@ export const handleChat: RequestHandler = async (req, res) => {
         "X-Title": "RStudio Tech AI",
         "User-Agent": "RStudio-Tech-AI/1.0",
       },
-      body: JSON.stringify({
-        model: model,
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 2048,
-        stream: false,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
