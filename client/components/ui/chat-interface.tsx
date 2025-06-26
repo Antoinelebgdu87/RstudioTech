@@ -36,7 +36,7 @@ export function ChatInterface() {
     }>
   >([]);
   const [selectedModel, setSelectedModel] = useState(
-    "meta-llama/llama-3-8b-instruct:free",
+    "mistralai/mistral-small-3.2-24b-instruct:free",
   );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
