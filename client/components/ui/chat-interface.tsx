@@ -234,11 +234,24 @@ export function ChatInterface() {
   const testAPI = async () => {
     try {
       console.log("Test de connectivité API...");
-      const response = await fetch("/api/test");
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      console.log("Données du test API:", data);
-      alert(`Test API RÉUSSI: ${JSON.stringify(data)}`);
+
+      // Test 1: ping simple
+      console.log("Test 1: /api/ping");
+      const pingResponse = await fetch("/api/ping");
+      console.log("Ping status:", pingResponse.status);
+      const pingData = await pingResponse.json();
+      console.log("Ping data:", pingData);
+
+      // Test 2: models
+      console.log("Test 2: /api/models");
+      const modelsResponse = await fetch("/api/models");
+      console.log("Models status:", modelsResponse.status);
+      const modelsData = await modelsResponse.json();
+      console.log("Models data:", modelsData);
+
+      alert(
+        `Tests réussis ! Ping: ${JSON.stringify(pingData)} Models: ${modelsData.models?.length || 0} modèles`,
+      );
     } catch (error) {
       console.error("Test API échoué:", error);
       alert(`Test API ÉCHOUÉ: ${error}`);
