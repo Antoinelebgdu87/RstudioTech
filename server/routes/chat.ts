@@ -19,33 +19,33 @@ const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 // Free models available on OpenRouter
 const FREE_MODELS = [
   {
-    id: "meta-llama/llama-3-8b-instruct:free",
-    name: "Llama 3 8B",
-    description: "Meta's powerful 8B parameter model",
+    id: "mistralai/mistral-small-3.2-24b-instruct:free",
+    name: "Mistral Small 3.2",
+    description: "Mistral's 24B parameter model for complex tasks",
     free: true,
   },
   {
-    id: "google/gemma-3-27b-it:free",
-    name: "Gemma 3 27B",
-    description: "Google's latest instruction-tuned model",
-    free: true,
-  },
-  {
-    id: "deepseek/deepseek-r1:free",
+    id: "deepseek/deepseek-r1-0528:free",
     name: "DeepSeek R1",
-    description: "DeepSeek's reasoning model",
+    description: "DeepSeek's advanced reasoning model",
     free: true,
   },
   {
-    id: "amazon/nova-lite-v1",
-    name: "Amazon Nova Lite",
-    description: "Amazon's lightweight AI model",
+    id: "qwen/qwen3-8b:free",
+    name: "Qwen 3 8B",
+    description: "Alibaba's efficient 8B parameter model",
     free: true,
   },
   {
-    id: "amazon/nova-micro-v1",
-    name: "Amazon Nova Micro",
-    description: "Amazon's ultra-fast micro model",
+    id: "qwen/qwen3-14b:free",
+    name: "Qwen 3 14B",
+    description: "Alibaba's more powerful 14B parameter model",
+    free: true,
+  },
+  {
+    id: "mistralai/devstral-small:free",
+    name: "Devstral Small",
+    description: "Mistral's code-focused development model",
     free: true,
   },
 ];
