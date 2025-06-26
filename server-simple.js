@@ -4,6 +4,10 @@ const cors = require("cors");
 const app = express();
 const port = 3001;
 
+// Nouvelle clé API OpenRouter
+const OPENROUTER_API_KEY = "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";
+const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -99,16 +103,53 @@ app.post("/api/chat", (req, res) => {
     };
     conv.messages.push(userMsg);
 
-    // Generate AI response
+    // Generate AI response via OpenRouter
     let aiResponse = "";
     const lowerMsg = message.toLowerCase();
+
+    console.log("🔑 Tentative avec OpenRouter...");
+
+    try {
+      // Préparer les messages pour OpenRouter
+      const messages = conv.messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://rstudio-tech.com",
+          "X-Title": "RStudio Tech AI",
+        },
+        body: JSON.stringify({
+          model: "mistralai/mistral-small-3.2-24b-instruct:free",
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 2048,
+          stream: false,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        aiResponse = data.choices?.[0]?.message?.content || "Erreur lors de la génération.";
+        console.log("✅ Réponse OpenRouter reçue !");
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      console.log("❌ OpenRouter failed, using fallback:", error.message);
+      // Fallback intelligent si OpenRouter échoue
 
     if (
       lowerMsg.includes("bonjour") ||
       lowerMsg.includes("salut") ||
       lowerMsg.includes("hello")
     ) {
-      aiResponse = `🤖 **Bonjour !** 
+      aiResponse = `🤖 **Bonjour !**
 
 Je suis RStudio Tech IA, votre assistant intelligent !
 
@@ -121,7 +162,7 @@ Je peux vous aider avec :
 
 Que puis-je faire pour vous aujourd'hui ?`;
     } else if (lowerMsg.includes("comment") && lowerMsg.includes("ça va")) {
-      aiResponse = `😊 Je vais très bien, merci ! 
+      aiResponse = `😊 Je vais très bien, merci !
 
 En tant qu'IA, je suis toujours prêt à vous aider. Comment puis-je vous assister aujourd'hui ?
 
@@ -155,7 +196,7 @@ Montrez-moi votre code ou décrivez votre problème !`;
 - Aide aux devoirs
 - Tutoriels personnalisés
 
-💼 **Professionnel** 
+💼 **Professionnel**
 - Rédaction de documents
 - Analyse de données
 - Présentation de projets
