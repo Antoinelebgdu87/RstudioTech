@@ -19,12 +19,6 @@ const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 // Modèles gratuits disponibles sur OpenRouter
 const FREE_MODELS = [
   {
-    id: "mistralai/mistral-small-3.2-24b-instruct:free",
-    name: "Mistral Small 3.2",
-    description: "Modèle 24B de Mistral pour les tâches complexes",
-    free: true,
-  },
-  {
     id: "deepseek/deepseek-r1-0528:free",
     name: "DeepSeek R1",
     description: "Modèle de raisonnement avancé de DeepSeek",
@@ -48,6 +42,12 @@ const FREE_MODELS = [
     description: "Modèle de développement axé code de Mistral",
     free: true,
   },
+  {
+    id: "google/gemma-3n-e4b-it:free",
+    name: "Gemma 3n",
+    description: "Modèle instruction-tuned de Google",
+    free: true,
+  },
 ];
 
 export const handleChat: RequestHandler = async (req, res) => {
@@ -55,7 +55,7 @@ export const handleChat: RequestHandler = async (req, res) => {
     const {
       message,
       conversationId,
-      model = "mistralai/mistral-small-3.2-24b-instruct:free",
+      model = "deepseek/deepseek-r1-0528:free",
     }: ChatRequest = req.body;
 
     if (!message) {
