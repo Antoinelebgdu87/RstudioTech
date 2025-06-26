@@ -11,9 +11,9 @@
     ]
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\" --names \"API,CLIENT\" --prefix-colors \"blue,green\"",
     "dev:client": "vite",
-    "dev:api": "tsx server/standalone.ts",
+    "dev:api": "node api-server.js",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
