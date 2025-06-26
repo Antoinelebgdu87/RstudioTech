@@ -103,6 +103,7 @@ export const handleChat: RequestHandler = async (req, res) => {
         "Content-Type": "application/json",
         "HTTP-Referer": "https://rstudio-tech.com",
         "X-Title": "RStudio Tech AI",
+        "User-Agent": "RStudio-Tech-AI/1.0",
       },
       body: JSON.stringify({
         model: model,
