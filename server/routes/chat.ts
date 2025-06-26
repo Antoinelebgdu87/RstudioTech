@@ -55,7 +55,7 @@ export const handleChat: RequestHandler = async (req, res) => {
     const {
       message,
       conversationId,
-      model = "meta-llama/llama-3-8b-instruct:free",
+      model = "mistralai/mistral-small-3.2-24b-instruct:free",
     }: ChatRequest = req.body;
 
     if (!message) {
