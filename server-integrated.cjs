@@ -237,12 +237,12 @@ C'est une question intéressante ! Je peux vous proposer des solutions adaptées
 app.use(express.static(path.join(__dirname, "dist/spa")));
 
 // Error handler pour les routes API
-app.use('/api/*', (req, res) => {
+app.use("/api/*", (req, res) => {
   console.log(`❌ Route API non trouvée: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     error: "API endpoint not found",
     path: req.originalUrl,
-    method: req.method
+    method: req.method,
   });
 });
 
@@ -257,7 +257,7 @@ app.use((error, req, res, next) => {
   console.error("❌ Erreur serveur:", error);
   res.status(500).json({
     error: "Erreur interne du serveur",
-    message: error.message
+    message: error.message,
   });
 });
 
@@ -271,5 +271,4 @@ app.listen(port, () => {
   console.log(`  GET  /api/conversations`);
   console.log(`  POST /api/conversations/new`);
   console.log(`  POST /api/chat`);
-});
 });
