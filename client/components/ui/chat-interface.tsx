@@ -87,37 +87,6 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      // Create user message immediately for optimistic updates
-      const userMessage: ChatMessageType = {
-        id: `user-${Date.now()}`,
-        role: "user",
-        content: message,
-        timestamp: Date.now(),
-      };
-
-      // If no current conversation, create a temporary one for immediate UI update
-      if (!currentConversation) {
-        const tempConversation: Conversation = {
-          id: `temp-${Date.now()}`,
-          title: message.slice(0, 50) + (message.length > 50 ? "..." : ""),
-          messages: [userMessage],
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        };
-        setCurrentConversation(tempConversation);
-      } else {
-        // Add user message to existing conversation
-        setCurrentConversation((prev) =>
-          prev
-            ? {
-                ...prev,
-                messages: [...prev.messages, userMessage],
-                updatedAt: Date.now(),
-              }
-            : null,
-        );
-      }
-
       const chatRequest: ChatRequest = {
         message,
         conversationId: currentConversation?.id,
@@ -125,11 +94,12 @@ export function ChatInterface() {
       };
 
       console.log(
-        "Sending chat request to:",
+        "Envoi de la requête chat vers:",
         "/api/chat",
-        "with data:",
+        "avec données:",
         chatRequest,
       );
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -138,18 +108,20 @@ export function ChatInterface() {
         body: JSON.stringify(chatRequest),
       });
 
-      console.log("Chat response:", response.status, response.ok);
+      console.log("Réponse chat:", response.status, response.ok);
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Chat response error:", errorText);
+        console.error("Erreur réponse chat:", errorText);
         throw new Error(
-          `Failed to send message: ${response.status} ${errorText}`,
+          `Échec de l'envoi du message: ${response.status} ${errorText}`,
         );
       }
 
       const data: ChatResponse = await response.json();
+      console.log("Données reçues:", data);
 
-      // Load the complete conversation from the server
+      // Charger la conversation complète depuis le serveur
       const convResponse = await fetch(
         `/api/conversations/${data.conversationId}`,
       );
@@ -157,23 +129,16 @@ export function ChatInterface() {
       if (convResponse.ok) {
         const conversation: Conversation = await convResponse.json();
         setCurrentConversation(conversation);
+        console.log("Conversation mise à jour:", conversation);
+      } else {
+        console.error("Échec du chargement de la conversation");
       }
 
-      // Reload conversations list
-      loadConversations();
+      // Recharger la liste des conversations
+      await loadConversations();
     } catch (error) {
-      console.error("Error sending message:", error);
-      // Remove the optimistic user message on error
-      if (currentConversation) {
-        setCurrentConversation((prev) =>
-          prev
-            ? {
-                ...prev,
-                messages: prev.messages.slice(0, -1), // Remove last message (the user message)
-              }
-            : null,
-        );
-      }
+      console.error("Erreur lors de l'envoi du message:", error);
+      alert(`Erreur: ${error}`);
     } finally {
       setIsLoading(false);
     }
