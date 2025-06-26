@@ -17,7 +17,7 @@ export function ChatInput({
   isLoading,
   onStop,
   disabled = false,
-  placeholder = "Type your message here...",
+  placeholder = "Tapez votre message ici...",
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -95,11 +95,11 @@ export function ChatInput({
         {/* Tips */}
         <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
           <div className="flex gap-4">
-            <span>Press Enter to send, Shift+Enter for new line</span>
+            <span>Entrée pour envoyer, Maj+Entrée pour nouvelle ligne</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full bg-green-400"></div>
-            <span>Free unlimited usage</span>
+            <span>Utilisation illimitée gratuite</span>
           </div>
         </div>
       </div>
