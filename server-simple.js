@@ -5,7 +5,8 @@ const app = express();
 const port = 3001;
 
 // Nouvelle clé API OpenRouter
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY =
+  "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
 // Middleware
@@ -24,6 +25,12 @@ app.get("/api/ping", (req, res) => {
 app.get("/api/models", (req, res) => {
   res.json({
     models: [
+      {
+        id: "mistralai/mistral-small-3.2-24b-instruct:free",
+        name: "Mistral Small 3.2",
+        description: "Modèle avancé de Mistral pour tâches complexes",
+        free: true,
+      },
       {
         id: "local-ai",
         name: "RStudio IA Local",
@@ -66,8 +73,8 @@ app.delete("/api/conversations/:id", (req, res) => {
   res.json({ success: true });
 });
 
-// CHAT ENDPOINT - LE PLUS IMPORTANT
-app.post("/api/chat", (req, res) => {
+// CHAT ENDPOINT PRINCIPAL
+app.post("/api/chat", async (req, res) => {
   try {
     const { message, conversationId, model } = req.body;
 
@@ -103,17 +110,15 @@ app.post("/api/chat", (req, res) => {
     };
     conv.messages.push(userMsg);
 
-    // Generate AI response via OpenRouter
     let aiResponse = "";
-    const lowerMsg = message.toLowerCase();
 
-    console.log("🔑 Tentative avec OpenRouter...");
+    console.log("🔑 Tentative avec OpenRouter avec nouvelle clé...");
 
     try {
       // Préparer les messages pour OpenRouter
-      const messages = conv.messages.map(msg => ({
+      const messages = conv.messages.map((msg) => ({
         role: msg.role,
-        content: msg.content
+        content: msg.content,
       }));
 
       const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
@@ -133,23 +138,31 @@ app.post("/api/chat", (req, res) => {
         }),
       });
 
+      console.log("📡 Status OpenRouter:", response.status);
+
       if (response.ok) {
         const data = await response.json();
-        aiResponse = data.choices?.[0]?.message?.content || "Erreur lors de la génération.";
+        aiResponse =
+          data.choices?.[0]?.message?.content ||
+          "Erreur lors de la génération.";
         console.log("✅ Réponse OpenRouter reçue !");
       } else {
+        const errorData = await response.text();
+        console.log("❌ Erreur OpenRouter:", errorData);
         throw new Error(`HTTP ${response.status}`);
       }
     } catch (error) {
       console.log("❌ OpenRouter failed, using fallback:", error.message);
-      // Fallback intelligent si OpenRouter échoue
 
-    if (
-      lowerMsg.includes("bonjour") ||
-      lowerMsg.includes("salut") ||
-      lowerMsg.includes("hello")
-    ) {
-      aiResponse = `🤖 **Bonjour !**
+      // Fallback intelligent
+      const lowerMsg = message.toLowerCase();
+
+      if (
+        lowerMsg.includes("bonjour") ||
+        lowerMsg.includes("salut") ||
+        lowerMsg.includes("hello")
+      ) {
+        aiResponse = `🤖 **Bonjour !**
 
 Je suis RStudio Tech IA, votre assistant intelligent !
 
@@ -161,72 +174,21 @@ Je peux vous aider avec :
 - 🛠️ Résolution de problèmes
 
 Que puis-je faire pour vous aujourd'hui ?`;
-    } else if (lowerMsg.includes("comment") && lowerMsg.includes("ça va")) {
-      aiResponse = `😊 Je vais très bien, merci !
+      } else if (lowerMsg.includes("comment") && lowerMsg.includes("ça va")) {
+        aiResponse = `😊 Je vais très bien, merci !
 
-En tant qu'IA, je suis toujours prêt à vous aider. Comment puis-je vous assister aujourd'hui ?
+En tant qu'IA, je suis toujours prêt à vous aider. Comment puis-je vous assister aujourd'hui ?`;
+      } else if (lowerMsg.includes("code") || lowerMsg.includes("programm")) {
+        aiResponse = `👨‍💻 **Question de programmation détectée !**
 
-Avez-vous des questions ou des tâches sur lesquelles vous aimeriez que je travaille ?`;
-    } else if (lowerMsg.includes("code") || lowerMsg.includes("programm")) {
-      aiResponse = `👨‍💻 **Question de programmation détectée !**
-
-Je suis spécialisé dans l'aide au développement :
-
-✅ **Languages supportés :**
-- JavaScript/TypeScript
-- Python
-- React/Vue/Angular
-- Node.js
-- HTML/CSS
-
-✅ **Je peux vous aider à :**
-- Débugger votre code
-- Optimiser vos algorithmes
-- Expliquer des concepts
-- Créer des exemples
-
-Montrez-moi votre code ou décrivez votre problème !`;
-    } else if (lowerMsg.includes("aide") || lowerMsg.includes("help")) {
-      aiResponse = `🆘 **Je suis là pour vous aider !**
-
-**Domaines d'expertise :**
-
-📚 **Éducation**
-- Explications de concepts
-- Aide aux devoirs
-- Tutoriels personnalisés
-
-💼 **Professionnel**
-- Rédaction de documents
-- Analyse de données
-- Présentation de projets
-
-🎨 **Créatif**
-- Brainstorming d'idées
-- Écriture créative
-- Solutions innovantes
-
-Précisez votre besoin et je vous accompagnerai !`;
-    } else {
-      aiResponse = `🧠 **Analyse de votre message :**
+Je suis spécialisé dans l'aide au développement. Montrez-moi votre code ou décrivez votre problème !`;
+      } else {
+        aiResponse = `🧠 **Analyse de votre message :**
 
 "${message}"
 
-**Ma réponse :**
-
-C'est une question intéressante ! Voici mon analyse et mes suggestions :
-
-📌 **Points clés :**
-- J'ai bien compris votre demande
-- Plusieurs approches sont possibles
-- Je peux vous proposer des solutions concrètes
-
-💡 **Recommandations :**
-- Précisez si besoin certains détails
-- Je peux approfondir certains aspects
-- N'hésitez pas à poser des questions de suivi
-
-Comment puis-je vous aider davantage sur ce sujet ?`;
+C'est une question intéressante ! Je peux vous proposer des solutions adaptées. Pouvez-vous me donner plus de détails sur ce que vous cherchez ?`;
+      }
     }
 
     // Add AI response
@@ -258,5 +220,5 @@ Comment puis-je vous aider davantage sur ce sujet ?`;
 app.listen(port, () => {
   console.log(`🚀 Serveur API démarré sur le port ${port}`);
   console.log(`🔗 URL: http://localhost:${port}`);
-  console.log(`✅ Prêt à recevoir des requêtes !`);
+  console.log(`✅ Prêt avec nouvelle clé OpenRouter !`);
 });
