@@ -124,6 +124,12 @@ export function ChatInterface() {
         model: selectedModel,
       };
 
+      console.log(
+        "Sending chat request to:",
+        "/api/chat",
+        "with data:",
+        chatRequest,
+      );
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -132,8 +138,13 @@ export function ChatInterface() {
         body: JSON.stringify(chatRequest),
       });
 
+      console.log("Chat response:", response.status, response.ok);
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        const errorText = await response.text();
+        console.error("Chat response error:", errorText);
+        throw new Error(
+          `Failed to send message: ${response.status} ${errorText}`,
+        );
       }
 
       const data: ChatResponse = await response.json();
