@@ -257,7 +257,26 @@ app.use("/api/*", (req, res) => {
 // Catch-all handler pour React Router (doit être APRÈS les routes API)
 app.get("*", (req, res) => {
   console.log(`📄 Serving React app for: ${req.originalUrl}`);
-  res.sendFile(path.join(__dirname, "dist/spa/index.html"));
+
+  const indexPath = path.join(__dirname, "dist/spa/index.html");
+
+  // Vérifier si le fichier index.html existe
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    console.log("❌ index.html non trouvé, création d'une réponse de base");
+    res.send(`
+      <!DOCTYPE html>
+      <html><head><title>RStudio Tech IA</title></head>
+      <body>
+        <div id="root">
+          <h1>RStudio Tech IA</h1>
+          <p>Application en cours de chargement...</p>
+          <p>Chemin recherché: ${indexPath}</p>
+        </div>
+      </body></html>
+    `);
+  }
 });
 
 // Global error handler
