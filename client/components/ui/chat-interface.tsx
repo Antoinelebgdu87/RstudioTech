@@ -58,7 +58,9 @@ export function ChatInterface() {
 
   const loadConversations = async () => {
     try {
+      console.log("Loading conversations from:", "/api/conversations");
       const response = await fetch("/api/conversations");
+      console.log("Conversations response:", response.status, response.ok);
       const data: ConversationsResponse = await response.json();
       setConversations(data.conversations);
     } catch (error) {
@@ -68,9 +70,12 @@ export function ChatInterface() {
 
   const loadModels = async () => {
     try {
+      console.log("Loading models from:", "/api/models");
       const response = await fetch("/api/models");
+      console.log("Models response:", response.status, response.ok);
       const data: ModelsResponse = await response.json();
       setModels(data.models);
+      console.log("Loaded models:", data.models.length);
     } catch (error) {
       console.error("Failed to load models:", error);
     }
