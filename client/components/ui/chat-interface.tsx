@@ -143,56 +143,45 @@ export function ChatInterface() {
 
   const handleNewConversation = async () => {
     try {
-      const response = await fetch("/api/conversations/new", {
-        method: "POST",
-      });
-      const newConversation: Conversation = await response.json();
+      const newConversation = await api.newConversation();
       setCurrentConversation(newConversation);
       setConversations((prev) => [newConversation, ...prev]);
     } catch (error) {
-      console.error("Failed to create new conversation:", error);
+      console.error("Échec de la création d'une nouvelle conversation:", error);
     }
   };
 
   const handleSelectConversation = async (id: string) => {
     try {
-      const response = await fetch(`/api/conversations/${id}`);
-      const conversation: Conversation = await response.json();
+      const conversation = await api.getConversation(id);
       setCurrentConversation(conversation);
     } catch (error) {
-      console.error("Failed to load conversation:", error);
+      console.error("Échec du chargement de la conversation:", error);
     }
   };
 
   const handleDeleteConversation = async (id: string) => {
     try {
-      await fetch(`/api/conversations/${id}`, {
-        method: "DELETE",
-      });
-
+      await api.deleteConversation(id);
       setConversations((prev) => prev.filter((conv) => conv.id !== id));
 
       if (currentConversation?.id === id) {
         setCurrentConversation(null);
       }
     } catch (error) {
-      console.error("Failed to delete conversation:", error);
+      console.error("Échec de la suppression de la conversation:", error);
     }
   };
 
   const testAPI = async () => {
     try {
-      console.log("Testing API connectivity...");
-      const response = await fetch("/api/test");
-      console.log("API test response:", response.status, response.ok);
-      const data = await response.json();
-      console.log("API test data:", data);
-      alert(
-        `API test ${response.ok ? "SUCCESS" : "FAILED"}: ${JSON.stringify(data)}`,
-      );
+      console.log("Test de connectivité API...");
+      const data = await api.test();
+      console.log("Données du test API:", data);
+      alert(`Test API RÉUSSI: ${JSON.stringify(data)}`);
     } catch (error) {
-      console.error("API test failed:", error);
-      alert(`API test FAILED: ${error}`);
+      console.error("Test API échoué:", error);
+      alert(`Test API ÉCHOUÉ: ${error}`);
     }
   };
 
