@@ -53,11 +53,41 @@ export function ChatInterface() {
     scrollToBottom();
   }, [currentConversation?.messages]);
 
-  // Load initial data
+  // Vérifier la disponibilité de l'API au démarrage
   useEffect(() => {
-    loadConversations();
-    loadModels();
+    checkAPIAndLoadData();
   }, []);
+
+  const checkAPIAndLoadData = async () => {
+    setIsCheckingAPI(true);
+    console.log("🔍 Vérification de la disponibilité de l'API...");
+
+    try {
+      const isAPIAvailable = await apiFallback.checkAPIHealth();
+      setApiAvailable(isAPIAvailable);
+
+      if (isAPIAvailable) {
+        console.log("✅ API disponible, chargement des données...");
+        await loadConversations();
+        await loadModels();
+      } else {
+        console.log("🔄 API indisponible, utilisation du mode démo");
+        // Charger les données de démonstration
+        const demoModels = apiFallback.getModels();
+        setModels(demoModels.models);
+        const demoConversations = apiFallback.getConversations();
+        setConversations(demoConversations.conversations);
+      }
+    } catch (error) {
+      console.error("❌ Erreur lors de la vérification de l'API:", error);
+      setApiAvailable(false);
+      // Utiliser le fallback en cas d'erreur
+      const demoModels = apiFallback.getModels();
+      setModels(demoModels.models);
+    } finally {
+      setIsCheckingAPI(false);
+    }
+  };
 
   const loadConversations = async () => {
     try {
