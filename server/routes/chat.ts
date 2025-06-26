@@ -19,27 +19,33 @@ const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 // Free models available on OpenRouter
 const FREE_MODELS = [
   {
-    id: "microsoft/phi-3-mini-128k-instruct:free",
-    name: "Phi-3 Mini",
-    description: "Fast and efficient model for general tasks",
+    id: "meta-llama/llama-3-8b-instruct:free",
+    name: "Llama 3 8B",
+    description: "Meta's powerful 8B parameter model",
     free: true,
   },
   {
-    id: "google/gemma-7b-it:free",
-    name: "Gemma 7B",
-    description: "Google's open source model",
+    id: "google/gemma-3-27b-it:free",
+    name: "Gemma 3 27B",
+    description: "Google's latest instruction-tuned model",
     free: true,
   },
   {
-    id: "meta-llama/llama-3.2-3b-instruct:free",
-    name: "Llama 3.2 3B",
-    description: "Meta's latest small model",
+    id: "deepseek/deepseek-r1:free",
+    name: "DeepSeek R1",
+    description: "DeepSeek's reasoning model",
     free: true,
   },
   {
-    id: "meta-llama/llama-3.2-1b-instruct:free",
-    name: "Llama 3.2 1B",
-    description: "Very fast lightweight model",
+    id: "amazon/nova-lite-v1",
+    name: "Amazon Nova Lite",
+    description: "Amazon's lightweight AI model",
+    free: true,
+  },
+  {
+    id: "amazon/nova-micro-v1",
+    name: "Amazon Nova Micro",
+    description: "Amazon's ultra-fast micro model",
     free: true,
   },
 ];
