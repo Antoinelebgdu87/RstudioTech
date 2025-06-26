@@ -7,6 +7,7 @@ import {
   ModelsResponse,
   ConversationsResponse,
 } from "@shared/api";
+import { apiFallback } from "@/lib/api-fallback";
 
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
