@@ -155,34 +155,58 @@ app.post("/api/chat", async (req, res) => {
 
     console.log("Calling OpenRouter API...");
 
-    // Call OpenRouter API
-    const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://rstudio-tech.com",
-        "X-Title": "RStudio Tech AI",
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 2048,
-        stream: false,
-      }),
-    });
+    let assistantContent;
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error("OpenRouter API error:", errorData);
-      throw new Error(`OpenRouter API error: ${response.status}`);
+    try {
+      // Call OpenRouter API
+      const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://rstudio-tech.com",
+          "X-Title": "RStudio Tech AI",
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 2048,
+          stream: false,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("OpenRouter API error:", errorData);
+        throw new Error(`OpenRouter API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      assistantContent =
+        data.choices?.[0]?.message?.content ||
+        "Je m'excuse, mais je n'ai pas pu générer une réponse.";
+    } catch (apiError) {
+      console.error("API Error, using fallback response:", apiError);
+
+      // Fallback response when API fails
+      assistantContent = `🤖 **RStudio Tech IA** (Mode de Test)
+
+Bonjour ! Je suis votre assistant IA. Actuellement, je fonctionne en mode de test car il y a un problème temporaire avec la connexion à l'API OpenRouter.
+
+**Votre message :** "${message}"
+
+**Réponse de test :** Je peux vous aider avec :
+- 💻 Programmation et développement
+- 📝 Rédaction et écriture
+- 🔍 Recherche et analyse
+- 🎓 Apprentissage et éducation
+- 🛠️ Résolution de problèmes
+
+*Note: Une fois la connexion API rétablie, vous bénéficierez de toutes les fonctionnalités avancées d'IA.*
+
+Modèle sélectionné: ${model}`;
     }
-
-    const data = await response.json();
-    const assistantContent =
-      data.choices?.[0]?.message?.content ||
-      "Je m'excuse, mais je n'ai pas pu générer une réponse.";
 
     // Add assistant message
     const assistantMessage = {
