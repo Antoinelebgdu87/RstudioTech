@@ -39,6 +39,8 @@ export function ChatInterface() {
     }>
   >([]);
   const [selectedModel, setSelectedModel] = useState("qwen/qwen3-8b:free");
+  const [apiAvailable, setApiAvailable] = useState<boolean | null>(null);
+  const [isCheckingAPI, setIsCheckingAPI] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
