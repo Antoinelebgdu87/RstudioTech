@@ -23,6 +23,14 @@ export function createServer() {
     res.json({ message: "Hello from Express server v2!" });
   });
 
+  app.get("/api/test", (_req, res) => {
+    res.json({
+      success: true,
+      timestamp: Date.now(),
+      message: "API test endpoint working",
+    });
+  });
+
   app.get("/api/demo", handleDemo);
 
   // Chat API routes
