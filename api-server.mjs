@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Simple API key for OpenRouter
 const OPENROUTER_API_KEY =
-  "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";
+  "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
 // Test endpoints
