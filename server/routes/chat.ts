@@ -104,13 +104,6 @@ export const handleChat: RequestHandler = async (req, res) => {
       stream: false,
     };
 
-    console.log("OpenRouter request:", {
-      url: `${OPENROUTER_BASE_URL}/chat/completions`,
-      model: model,
-      messagesCount: messages.length,
-      apiKeyPrefix: OPENROUTER_API_KEY.substring(0, 15) + "...",
-    });
-
     const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
