@@ -241,61 +241,74 @@ export function ChatInterface() {
           <BrainCircuitIcon className="w-10 h-10 text-white" />
         </div>
         <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-brand-accent bg-clip-text text-transparent">
-          Welcome to RStudio Tech AI
+          Bienvenue sur RStudio Tech IA
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          Your free AI assistant with premium features. No limits, no
-          subscriptions.
+          Votre assistant IA gratuit avec des fonctionnalités premium. Aucune
+          limite, aucun abonnement.
         </p>
 
         <Button onClick={testAPI} variant="outline" className="mb-8">
-          🔧 Test API Connection
+          🔧 Tester la Connexion API
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
             <SparklesIcon className="w-6 h-6 text-primary mb-2" />
-            <h3 className="font-semibold mb-1">Smart Conversations</h3>
+            <h3 className="font-semibold mb-1">Conversations Intelligentes</h3>
             <p className="text-sm text-muted-foreground">
-              Engage in natural, intelligent conversations
+              Engagez des conversations naturelles et intelligentes
             </p>
           </div>
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
             <ZapIcon className="w-6 h-6 text-brand-accent mb-2" />
-            <h3 className="font-semibold mb-1">Multiple Models</h3>
+            <h3 className="font-semibold mb-1">Modèles Multiples</h3>
             <p className="text-sm text-muted-foreground">
-              Choose from various AI models for different tasks
+              Choisissez parmi divers modèles IA pour différentes tâches
             </p>
           </div>
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
             <MessageSquareIcon className="w-6 h-6 text-brand-secondary mb-2" />
-            <h3 className="font-semibold mb-1">Chat History</h3>
+            <h3 className="font-semibold mb-1">Historique des Chats</h3>
             <p className="text-sm text-muted-foreground">
-              Save and revisit your conversations anytime
+              Sauvegardez et revisitez vos conversations à tout moment
             </p>
           </div>
         </div>
 
         <div className="space-y-2 text-sm text-muted-foreground">
-          <p>Try asking about:</p>
+          <p>Essayez de demander :</p>
           <div className="flex flex-wrap gap-2 justify-center">
             {[
-              "Code review and debugging",
-              "Creative writing",
-              "Data analysis",
-              "Learning new concepts",
-              "Problem solving",
-            ].map((suggestion) => (
-              <Button
-                key={suggestion}
-                variant="outline"
-                size="sm"
-                onClick={() => handleSendMessage(`Help me with ${suggestion}`)}
-                className="text-xs"
-              >
-                {suggestion}
-              </Button>
-            ))}
+              "Révision et débogage de code",
+              "Écriture créative",
+              "Analyse de données",
+              "Apprentissage de nouveaux concepts",
+              "Résolution de problèmes",
+            ].map((suggestion, index) => {
+              const englishSuggestions = [
+                "Code review and debugging",
+                "Creative writing",
+                "Data analysis",
+                "Learning new concepts",
+                "Problem solving",
+              ];
+              return (
+                <Button
+                  key={suggestion}
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleSendMessage(
+                      `Aidez-moi avec ${englishSuggestions[index]}`,
+                    )
+                  }
+                  className="text-xs"
+                >
+                  {suggestion}
+                </Button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -392,8 +405,8 @@ export function ChatInterface() {
           disabled={false}
           placeholder={
             currentConversation
-              ? "Type your message..."
-              : "Start a new conversation..."
+              ? "Tapez votre message..."
+              : "Commencer une nouvelle conversation..."
           }
         />
       </div>
