@@ -233,18 +233,43 @@ C'est une question intéressante ! Je peux vous proposer des solutions adaptées
   }
 });
 
+// Servir les fichiers statiques React AVANT le catch-all
+app.use(express.static(path.join(__dirname, "dist/spa")));
+
+// Error handler pour les routes API
+app.use('/api/*', (req, res) => {
+  console.log(`❌ Route API non trouvée: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({
+    error: "API endpoint not found",
+    path: req.originalUrl,
+    method: req.method
+  });
+});
+
 // Catch-all handler pour React Router (doit être APRÈS les routes API)
 app.get("*", (req, res) => {
-  // Ne pas servir index.html pour les routes API
-  if (req.path.startsWith("/api/")) {
-    return res.status(404).json({ error: "API endpoint not found" });
-  }
-
+  console.log(`📄 Serving React app for: ${req.originalUrl}`);
   res.sendFile(path.join(__dirname, "dist/spa/index.html"));
+});
+
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error("❌ Erreur serveur:", error);
+  res.status(500).json({
+    error: "Erreur interne du serveur",
+    message: error.message
+  });
 });
 
 app.listen(port, () => {
   console.log(`🚀 Serveur RStudio Tech IA démarré sur le port ${port}`);
   console.log(`🔗 URL: http://localhost:${port}`);
   console.log(`✅ Frontend et API intégrés !`);
+  console.log(`📋 Routes API disponibles:`);
+  console.log(`  GET  /api/ping`);
+  console.log(`  GET  /api/models`);
+  console.log(`  GET  /api/conversations`);
+  console.log(`  POST /api/conversations/new`);
+  console.log(`  POST /api/chat`);
+});
 });
