@@ -10,9 +10,22 @@ const OPENROUTER_API_KEY =
   "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Middleware - L'ordre est important !
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
+
+// Log toutes les requêtes pour déboguer
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Servir les fichiers statiques React
 app.use(express.static(path.join(__dirname, "dist/spa")));
