@@ -278,8 +278,8 @@ export function ChatInterface() {
           Bienvenue sur RStudio Tech IA
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          Votre assistant IA gratuit avec des fonctionnalités premium. Aucune
-          limite, aucun abonnement.
+          Assistant IA ultra-rapide et intelligent. Réponses instantanées,
+          utilisation illimitée et gratuite.
         </p>
 
         <Button onClick={testAPI} variant="outline" className="mb-8">
@@ -314,30 +314,19 @@ export function ChatInterface() {
           <p>Essayez de demander :</p>
           <div className="flex flex-wrap gap-2 justify-center">
             {[
-              "Révision et débogage de code",
-              "Écriture créative",
-              "Analyse de données",
-              "Apprentissage de nouveaux concepts",
-              "Résolution de problèmes",
+              "Salut ! Comment ça va ?",
+              "Explique-moi React en 2 minutes",
+              "Code Python pour débutant",
+              "Idées créatives rapides",
+              "Résous ce problème",
             ].map((suggestion, index) => {
-              const englishSuggestions = [
-                "Code review and debugging",
-                "Creative writing",
-                "Data analysis",
-                "Learning new concepts",
-                "Problem solving",
-              ];
               return (
                 <Button
                   key={suggestion}
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    handleSendMessage(
-                      `Aidez-moi avec ${englishSuggestions[index]}`,
-                    )
-                  }
-                  className="text-xs"
+                  onClick={() => handleSendMessage(suggestion)}
+                  className="text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
                 >
                   {suggestion}
                 </Button>
