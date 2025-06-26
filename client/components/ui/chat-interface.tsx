@@ -138,7 +138,32 @@ export function ChatInterface() {
       await loadConversations();
     } catch (error) {
       console.error("Erreur lors de l'envoi du message:", error);
-      alert(`Erreur: ${error}`);
+
+      // Afficher un message d'erreur convivial à l'utilisateur
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Une erreur est survenue lors de l'envoi du message";
+
+      // Créer un message d'erreur dans l'interface
+      if (currentConversation) {
+        const errorChatMessage: ChatMessageType = {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          content: `❌ **Erreur**: ${errorMessage}\n\nVeuillez réessayer dans quelques instants.`,
+          timestamp: Date.now(),
+        };
+
+        setCurrentConversation((prev) =>
+          prev
+            ? {
+                ...prev,
+                messages: [...prev.messages, errorChatMessage],
+                updatedAt: Date.now(),
+              }
+            : null,
+        );
+      }
     } finally {
       setIsLoading(false);
     }
