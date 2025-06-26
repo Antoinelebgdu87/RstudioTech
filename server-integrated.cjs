@@ -7,7 +7,7 @@ const port = 3000;
 
 // Nouvelle clé API OpenRouter
 const OPENROUTER_API_KEY =
-  "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";
+  "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
 // Middleware
