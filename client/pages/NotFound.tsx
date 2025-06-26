@@ -21,10 +21,10 @@ const NotFound = () => {
         </div>
         <h1 className="text-4xl font-bold mb-4 text-foreground">404</h1>
         <p className="text-xl text-muted-foreground mb-6">
-          Oops! Page not found
+          Oups ! Page non trouvée
         </p>
         <Button asChild>
-          <a href="/">Return to RStudio Tech AI</a>
+          <a href="/">Retourner à RStudio Tech IA</a>
         </Button>
       </div>
     </div>
