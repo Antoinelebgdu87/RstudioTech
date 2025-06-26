@@ -230,8 +230,19 @@ C'est une question intéressante ! Je peux vous proposer des solutions adaptées
   }
 });
 
-// Servir les fichiers statiques React AVANT le catch-all
-app.use(express.static(path.join(__dirname, "dist/spa")));
+// Vérifier et servir les fichiers statiques React
+const staticPath = path.join(__dirname, "dist/spa");
+console.log(`📁 Chemin statique: ${staticPath}`);
+
+// Vérifier si le dossier existe
+const fs = require("fs");
+if (fs.existsSync(staticPath)) {
+  console.log("✅ Dossier dist/spa trouvé");
+  app.use(express.static(staticPath));
+} else {
+  console.log("❌ Dossier dist/spa non trouvé, utilisation du dossier courant");
+  app.use(express.static(__dirname));
+}
 
 // Error handler pour les routes API
 app.use("/api/*", (req, res) => {
