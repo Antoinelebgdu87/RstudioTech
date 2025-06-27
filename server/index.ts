@@ -107,5 +107,21 @@ export function createServer() {
   app.post("/api/test/create-licenses", handleCreateTestLicenses);
   app.get("/api/test/check-licenses", handleCheckTestLicenses);
 
+  // Créer automatiquement les licences de test au démarrage
+  setTimeout(async () => {
+    try {
+      console.log("🔧 Création automatique des licences de test...");
+      await handleCreateTestLicenses(
+        {} as any,
+        {
+          json: (data: any) =>
+            console.log("✅ Licences créées:", data.licenses?.length || 0),
+        } as any,
+      );
+    } catch (error) {
+      console.log("ℹ️  Licences probablement déjà créées");
+    }
+  }, 2000);
+
   return app;
 }
