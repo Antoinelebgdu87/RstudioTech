@@ -1,22 +1,4 @@
 import { useState } from "react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Badge } from "../components/ui/badge";
-import {
-  KeyIcon,
-  ShieldIcon,
-  CheckCircleIcon,
-  AlertCircleIcon,
-  SparklesIcon,
-} from "lucide-react";
 
 interface LicenseGateProps {
   onLicenseValidated: (licenseData: any) => void;
@@ -84,150 +66,244 @@ export default function LicenseGate({ onLicenseValidated }: LicenseGateProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
-      <div className="w-full max-w-md space-y-6">
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          background: "white",
+          borderRadius: "20px",
+          padding: "40px",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+          maxWidth: "500px",
+          width: "100%",
+        }}
+      >
         {/* Header */}
-        <div className="text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-xl">
-            <ShieldIcon className="w-10 h-10 text-white" />
+        <div style={{ textAlign: "center", marginBottom: "30px" }}>
+          <div
+            style={{
+              width: "80px",
+              height: "80px",
+              margin: "0 auto 20px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "30px",
+            }}
+          >
+            🔐
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1
+            style={{
+              fontSize: "32px",
+              fontWeight: "bold",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              marginBottom: "10px",
+            }}
+          >
             RStudio Tech IA
           </h1>
-          <p className="text-gray-600 mt-2 text-lg">
-            Accès sécurisé par licence
+          <p style={{ color: "#666", fontSize: "18px" }}>
+            Entrez votre clé de licence pour accéder à l'IA
           </p>
         </div>
 
-        {/* Formulaire de licence */}
-        <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="flex items-center justify-center gap-2 text-xl">
-              <KeyIcon className="w-5 h-5 text-blue-600" />
-              Validation de licence
-            </CardTitle>
-            <CardDescription className="text-base">
-              Entrez votre clé de licence pour accéder à l'IA
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label
-                  htmlFor="license"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Clé de licence
-                </label>
-                <div className="relative">
-                  <Input
-                    id="license"
-                    type="text"
-                    placeholder="Saisissez votre clé de licence..."
-                    value={licenseKey}
-                    onChange={(e) => setLicenseKey(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    disabled={isValidating}
-                    className="pl-4 py-3 text-center font-mono text-sm bg-gray-50 border-2 focus:bg-white transition-colors"
-                  />
-                </div>
-              </div>
+        {/* Formulaire */}
+        <form onSubmit={handleSubmit} style={{ marginBottom: "30px" }}>
+          <div style={{ marginBottom: "20px" }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: "500",
+                color: "#333",
+              }}
+            >
+              Clé de licence
+            </label>
+            <input
+              type="text"
+              value={licenseKey}
+              onChange={(e) => setLicenseKey(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isValidating}
+              placeholder="Saisissez votre clé..."
+              style={{
+                width: "100%",
+                padding: "15px",
+                border: "2px solid #e1e5e9",
+                borderRadius: "10px",
+                fontSize: "16px",
+                textAlign: "center",
+                fontFamily: "monospace",
+                backgroundColor: isValidating ? "#f5f5f5" : "white",
+              }}
+            />
+          </div>
 
-              {/* Messages */}
-              {error && (
-                <Alert
-                  variant="destructive"
-                  className="border-red-200 bg-red-50"
-                >
-                  <AlertCircleIcon className="h-4 w-4" />
-                  <AlertDescription className="text-red-800">
-                    {error}
-                  </AlertDescription>
-                </Alert>
-              )}
+          {/* Messages */}
+          {error && (
+            <div
+              style={{
+                background: "#fee2e2",
+                border: "1px solid #fecaca",
+                color: "#dc2626",
+                padding: "12px",
+                borderRadius: "8px",
+                marginBottom: "15px",
+                fontSize: "14px",
+              }}
+            >
+              ❌ {error}
+            </div>
+          )}
 
-              {success && (
-                <Alert className="border-green-200 bg-green-50">
-                  <CheckCircleIcon className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-800">
-                    {success}
-                  </AlertDescription>
-                </Alert>
-              )}
+          {success && (
+            <div
+              style={{
+                background: "#dcfce7",
+                border: "1px solid #bbf7d0",
+                color: "#16a34a",
+                padding: "12px",
+                borderRadius: "8px",
+                marginBottom: "15px",
+                fontSize: "14px",
+              }}
+            >
+              ✅ {success}
+            </div>
+          )}
 
-              <Button
-                type="submit"
-                className="w-full py-3 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
-                disabled={isValidating || !licenseKey.trim()}
-              >
-                {isValidating ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Validation en cours...
-                  </>
-                ) : success ? (
-                  <>
-                    <CheckCircleIcon className="w-4 h-4 mr-2" />
-                    Accès autorisé !
-                  </>
-                ) : (
-                  <>
-                    <SparklesIcon className="w-4 h-4 mr-2" />
-                    Accéder à l'IA
-                  </>
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+          <button
+            type="submit"
+            disabled={isValidating || !licenseKey.trim()}
+            style={{
+              width: "100%",
+              padding: "15px",
+              background:
+                isValidating || !licenseKey.trim()
+                  ? "#9ca3af"
+                  : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: "white",
+              border: "none",
+              borderRadius: "10px",
+              fontSize: "16px",
+              fontWeight: "600",
+              cursor:
+                isValidating || !licenseKey.trim() ? "not-allowed" : "pointer",
+              transition: "all 0.3s",
+            }}
+          >
+            {isValidating
+              ? "🔄 Validation..."
+              : success
+                ? "✅ Accès autorisé !"
+                : "🚀 Accéder à l'IA"}
+          </button>
+        </form>
 
         {/* Clés de test */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-blue-800">
-              Clés de test disponibles
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {[
-              { key: "test-trial-123", type: "Trial", desc: "100 messages" },
-              { key: "test-basic-456", type: "Basic", desc: "1000 messages" },
-              {
-                key: "test-premium-789",
-                type: "Premium",
-                desc: "10000 messages",
-              },
-              {
-                key: "test-unlimited-000",
-                type: "Unlimited",
-                desc: "Illimité",
-              },
-            ].map((license) => (
-              <div
-                key={license.key}
-                onClick={() => setLicenseKey(license.key)}
-                className="flex items-center justify-between p-2 rounded cursor-pointer hover:bg-blue-100 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs">
-                    {license.type}
-                  </Badge>
-                  <span className="font-mono text-xs text-blue-700">
-                    {license.key}
-                  </span>
-                </div>
-                <span className="text-xs text-blue-600">{license.desc}</span>
+        <div
+          style={{
+            background: "#f8fafc",
+            border: "1px solid #e2e8f0",
+            borderRadius: "12px",
+            padding: "20px",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#475569",
+              marginBottom: "15px",
+            }}
+          >
+            🔧 Clés de test disponibles
+          </h3>
+          {[
+            { key: "test-trial-123", type: "Trial", desc: "100 messages" },
+            { key: "test-basic-456", type: "Basic", desc: "1000 messages" },
+            {
+              key: "test-premium-789",
+              type: "Premium",
+              desc: "10000 messages",
+            },
+            { key: "test-unlimited-000", type: "Unlimited", desc: "Illimité" },
+          ].map((license) => (
+            <div
+              key={license.key}
+              onClick={() => setLicenseKey(license.key)}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px",
+                margin: "5px 0",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "background 0.2s",
+                background:
+                  licenseKey === license.key ? "#e0e7ff" : "transparent",
+              }}
+              onMouseOver={(e) => (e.target.style.background = "#e2e8f0")}
+              onMouseOut={(e) =>
+                (e.target.style.background =
+                  licenseKey === license.key ? "#e0e7ff" : "transparent")
+              }
+            >
+              <div>
+                <span
+                  style={{
+                    background: "#667eea",
+                    color: "white",
+                    padding: "2px 8px",
+                    borderRadius: "4px",
+                    fontSize: "11px",
+                    fontWeight: "500",
+                    marginRight: "8px",
+                  }}
+                >
+                  {license.type}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: "12px",
+                    color: "#475569",
+                  }}
+                >
+                  {license.key}
+                </span>
               </div>
-            ))}
-            <p className="text-xs text-blue-600 text-center mt-2">
-              💡 Cliquez sur une clé pour la sélectionner
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="text-center text-sm text-gray-500">
-          <p>Système d'accès sécurisé • RStudio Tech</p>
+              <span style={{ fontSize: "12px", color: "#64748b" }}>
+                {license.desc}
+              </span>
+            </div>
+          ))}
+          <p
+            style={{
+              fontSize: "12px",
+              color: "#64748b",
+              textAlign: "center",
+              marginTop: "10px",
+              fontStyle: "italic",
+            }}
+          >
+            💡 Cliquez sur une clé pour la sélectionner
+          </p>
         </div>
       </div>
     </div>
