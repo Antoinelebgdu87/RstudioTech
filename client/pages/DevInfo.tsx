@@ -209,12 +209,27 @@ export default function DevInfo() {
               <h4 className="font-semibold">3. Fonctionnalités testées</h4>
               <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-4">
                 <li>✅ Authentification par licence</li>
+                <li>✅ Redirection automatique vers /login</li>
                 <li>✅ Vérification des limites d'usage</li>
                 <li>✅ Sauvegarde des conversations sur Firebase</li>
                 <li>✅ Restauration des conversations</li>
                 <li>✅ Dashboard admin complet</li>
                 <li>✅ Statistiques d'utilisation</li>
                 <li>✅ Gestion des licences</li>
+                <li>🆕 Raccourci clavier Ctrl+F1 pour admin</li>
+                <li>🆕 Notifications toast pour les actions</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-semibold">4. Raccourcis clavier</h4>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-4">
+                <li>
+                  <code>Ctrl + F1</code> : Accéder au panel admin
+                </li>
+                <li>Fonctionne sur toutes les pages</li>
+                <li>Redirection automatique vers login si non authentifié</li>
+                <li>Notification toast avec retour visuel</li>
               </ul>
             </div>
           </CardContent>
