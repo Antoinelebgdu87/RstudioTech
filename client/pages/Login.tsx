@@ -182,9 +182,31 @@ export default function Login() {
           </CardContent>
         </Card>
 
+        {/* Raccourci clavier */}
+        <Card className="border-dashed">
+          <CardContent className="pt-6">
+            <div className="text-center text-sm text-muted-foreground">
+              <p className="mb-2">
+                💡 <strong>Astuce :</strong> Utilisez le raccourci clavier
+              </p>
+              <div className="inline-flex items-center gap-1 px-3 py-1 bg-muted rounded-md font-mono text-xs">
+                <span>Ctrl</span>
+                <span>+</span>
+                <span>F1</span>
+              </div>
+              <p className="mt-2">pour accéder rapidement au panel admin</p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Footer */}
         <div className="text-center text-sm text-muted-foreground">
           <p>Besoin d'une licence ? Contactez votre administrateur</p>
+          <p className="mt-2">
+            <a href="/dev-info" className="text-primary hover:underline">
+              🔧 Clés de test pour développeurs
+            </a>
+          </p>
         </div>
       </div>
     </div>
