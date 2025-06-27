@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,13 +15,18 @@ import { KeyIcon, LockIcon, CheckCircleIcon, ShieldIcon } from "lucide-react";
 
 export default function Login() {
   const { isAuthenticated, login, isLoading } = useAuth();
+  const location = useLocation();
   const [licenseKey, setLicenseKey] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Obtenir l'URL de redirection depuis les paramètres
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = searchParams.get("redirect") || "/";
+
   // Rediriger si déjà connecté
   if (isAuthenticated && !isLoading) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={redirectTo} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +43,10 @@ export default function Login() {
     try {
       const result = await login(licenseKey.trim());
 
-      if (!result.success) {
+      if (result.success) {
+        // Redirection réussie se fera automatiquement via useEffect ci-dessus
+        window.location.href = redirectTo;
+      } else {
         setError(result.error || "Erreur de connexion");
       }
     } catch (error) {
