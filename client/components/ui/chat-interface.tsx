@@ -8,6 +8,8 @@ import {
   ConversationsResponse,
 } from "@shared/api";
 import { apiFallback } from "@/lib/api-fallback";
+import { useAuth, useAuthenticatedFetch } from "../../hooks/use-auth";
+import { FirebaseService } from "../../../server/firebase-config";
 
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
@@ -21,10 +23,17 @@ import {
   SparklesIcon,
   ZapIcon,
   MessageSquareIcon,
+  SaveIcon,
+  CloudIcon,
+  AlertCircleIcon,
+  DownloadIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ChatInterface() {
+  const { user, license, isAuthenticated } = useAuth();
+  const { makeAuthenticatedRequest } = useAuthenticatedFetch();
+
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] =
     useState<Conversation | null>(null);
@@ -41,6 +50,13 @@ export function ChatInterface() {
   const [selectedModel, setSelectedModel] = useState("qwen/qwen3-8b:free");
   const [apiAvailable, setApiAvailable] = useState<boolean | null>(null);
   const [isCheckingAPI, setIsCheckingAPI] = useState(true);
+
+  // États pour la sauvegarde
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const [savedConversations, setSavedConversations] = useState<any[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -116,6 +132,15 @@ export function ChatInterface() {
   };
 
   const sendMessageToAPI = async (message: string) => {
+    // Vérifier la licence avant d'envoyer
+    if (!license || !isAuthenticated) {
+      throw new Error("Licence requise pour utiliser l'IA");
+    }
+
+    if (license.usageCount >= license.maxUsage) {
+      throw new Error("Limite d'usage atteinte pour votre licence");
+    }
+
     const chatRequest = {
       message,
       conversationId: currentConversation?.id,
@@ -124,7 +149,8 @@ export function ChatInterface() {
 
     console.log("Envoi du message...", chatRequest);
 
-    const response = await fetch("/api/chat", {
+    // Utiliser la requête authentifiée pour inclure la licence
+    const response = await makeAuthenticatedRequest("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -332,6 +358,98 @@ export function ChatInterface() {
     }
   };
 
+  // Fonctions de sauvegarde
+  const saveConversation = async () => {
+    if (!currentConversation || !user || !isAuthenticated) {
+      console.warn(
+        "Impossible de sauvegarder : pas de conversation ou utilisateur non authentifié",
+      );
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      setSaveStatus("saving");
+
+      const response = await makeAuthenticatedRequest(
+        "/api/save/conversation",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            conversation: currentConversation,
+            userId: user.id,
+          }),
+        },
+      );
+
+      if (response.ok) {
+        setSaveStatus("saved");
+        console.log("✅ Conversation sauvegardée avec succès");
+
+        // Actualiser la liste des conversations sauvegardées
+        loadSavedConversations();
+
+        // Reset du statut après 2 secondes
+        setTimeout(() => setSaveStatus("idle"), 2000);
+      } else {
+        throw new Error("Erreur lors de la sauvegarde");
+      }
+    } catch (error) {
+      console.error("❌ Erreur sauvegarde:", error);
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const loadSavedConversations = async () => {
+    if (!user || !isAuthenticated) return;
+
+    try {
+      const response = await makeAuthenticatedRequest(
+        `/api/save/conversations/${user.id}`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setSavedConversations(data.conversations || []);
+      }
+    } catch (error) {
+      console.error("❌ Erreur chargement conversations sauvegardées:", error);
+    }
+  };
+
+  const restoreConversation = async (conversationId: string) => {
+    if (!user || !isAuthenticated) return;
+
+    try {
+      const response = await makeAuthenticatedRequest(
+        `/api/save/restore/${conversationId}/${user.id}`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.conversation) {
+          setCurrentConversation(data.conversation);
+          console.log("✅ Conversation restaurée");
+        }
+      }
+    } catch (error) {
+      console.error("❌ Erreur restauration:", error);
+    }
+  };
+
+  // Charger les conversations sauvegardées au démarrage
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      loadSavedConversations();
+    }
+  }, [isAuthenticated, user]);
+
   const EmptyState = () => (
     <div className="flex-1 flex items-center justify-center">
       <div className="text-center max-w-2xl mx-auto p-8">
@@ -486,6 +604,47 @@ export function ChatInterface() {
             </h2>
           </div>
           <div className="flex items-center gap-2">
+            {/* Bouton de sauvegarde */}
+            {currentConversation &&
+              currentConversation.messages.length > 0 &&
+              isAuthenticated && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={saveConversation}
+                  disabled={isSaving}
+                  className={`${
+                    saveStatus === "saved"
+                      ? "bg-green-50 border-green-200"
+                      : saveStatus === "error"
+                        ? "bg-red-50 border-red-200"
+                        : ""
+                  }`}
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-3 h-3 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      Sauvegarde...
+                    </>
+                  ) : saveStatus === "saved" ? (
+                    <>
+                      <CloudIcon className="w-3 h-3 mr-2 text-green-600" />
+                      Sauvegardé
+                    </>
+                  ) : saveStatus === "error" ? (
+                    <>
+                      <AlertCircleIcon className="w-3 h-3 mr-2 text-red-600" />
+                      Erreur
+                    </>
+                  ) : (
+                    <>
+                      <SaveIcon className="w-3 h-3 mr-2" />
+                      Sauvegarder
+                    </>
+                  )}
+                </Button>
+              )}
+
             <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
               <div
                 className={`w-2 h-2 rounded-full ${
@@ -503,6 +662,24 @@ export function ChatInterface() {
                     "Modèle IA"}
               </span>
             </div>
+
+            {/* Indicateur de licence */}
+            {isAuthenticated && license && (
+              <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground">
+                <div
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    license.usageCount >= license.maxUsage
+                      ? "bg-red-400"
+                      : license.usageCount / license.maxUsage > 0.8
+                        ? "bg-orange-400"
+                        : "bg-green-400"
+                  }`}
+                ></div>
+                <span>
+                  {license.usageCount}/{license.maxUsage}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
