@@ -171,6 +171,45 @@ export default function DevInfo() {
           </CardContent>
         </Card>
 
+        {/* Raccourcis clavier */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <KeyboardIcon className="w-5 h-5" />
+              Raccourcis clavier
+            </CardTitle>
+            <CardDescription>
+              Nouveauté : Navigation rapide par raccourcis
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 border rounded-lg bg-blue-50 border-blue-200">
+                <div className="flex items-center gap-3">
+                  <ShieldIcon className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">
+                    Accéder au panel admin
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Badge variant="outline" className="font-mono">
+                    Ctrl
+                  </Badge>
+                  <span className="text-muted-foreground">+</span>
+                  <Badge variant="outline" className="font-mono">
+                    F1
+                  </Badge>
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
+                💡 <strong>Astuce :</strong> Les raccourcis fonctionnent sur
+                toutes les pages. Si vous n'êtes pas authentifié, vous serez
+                d'abord redirigé vers la page de connexion.
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Instructions */}
         <Card>
           <CardHeader>
