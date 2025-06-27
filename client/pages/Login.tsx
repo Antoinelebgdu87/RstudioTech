@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -23,6 +24,22 @@ export default function Login() {
   // Obtenir l'URL de redirection depuis les paramètres
   const searchParams = new URLSearchParams(location.search);
   const redirectTo = searchParams.get("redirect") || "/";
+
+  // Raccourci clavier Ctrl+F1 pour admin
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "F1") {
+        event.preventDefault();
+        toast.info("🔐 Authentification requise", {
+          description: "Connectez-vous d'abord pour accéder à l'admin",
+          duration: 3000,
+        });
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Rediriger si déjà connecté
   if (isAuthenticated && !isLoading) {
