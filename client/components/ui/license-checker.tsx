@@ -6,6 +6,7 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 import { Progress } from "./progress";
 import { KeyboardShortcutsHelp } from "./keyboard-shortcuts-help";
+import { toast } from "sonner";
 import {
   AlertTriangleIcon,
   CheckCircleIcon,
@@ -27,6 +28,28 @@ export function LicenseChecker({
   const { user, license, isAuthenticated, checkLicense, logout } = useAuth();
   const [usageWarning, setUsageWarning] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+
+  // Raccourci clavier Ctrl+F1 pour admin
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "F1") {
+        event.preventDefault();
+
+        if (isAuthenticated) {
+          toast.success("🚀 Redirection vers le panel admin...", {
+            description: "Raccourci Ctrl+F1 activé",
+            duration: 2000,
+          });
+          setTimeout(() => {
+            window.location.href = "/admin";
+          }, 500);
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isAuthenticated]);
 
   // Vérifier la licence périodiquement
   useEffect(() => {
