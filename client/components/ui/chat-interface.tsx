@@ -10,7 +10,6 @@ import {
 import { apiFallback } from "@/lib/api-fallback";
 import { useAuth } from "../../contexts/AuthContext";
 import { useAuthenticatedFetch } from "../../hooks/use-auth";
-import { FirebaseService } from "../../../server/firebase-config";
 
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
@@ -507,7 +506,7 @@ export function ChatInterface() {
             <ZapIcon className="w-6 h-6 text-brand-accent mb-2" />
             <h3 className="font-semibold mb-1">Modèles Multiples</h3>
             <p className="text-sm text-muted-foreground">
-              Choisissez parmi divers modèles IA pour différentes tâches
+              Choisissez parmi divers modèles IA pour diff��rentes tâches
             </p>
           </div>
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
