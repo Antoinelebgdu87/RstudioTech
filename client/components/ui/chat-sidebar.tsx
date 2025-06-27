@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "./button";
 import { ScrollArea } from "./scroll-area";
+import { SavedConversations } from "./saved-conversations";
 import {
   PlusIcon,
   MessageSquareIcon,
@@ -17,6 +18,7 @@ interface ChatSidebarProps {
   onSelectConversation: (id: string) => void;
   onNewConversation: () => void;
   onDeleteConversation: (id: string) => void;
+  onRestoreConversation?: (conversationId: string) => void;
   selectedModel: string;
   onModelChange: (model: string) => void;
   models: Array<{
@@ -33,6 +35,7 @@ export function ChatSidebar({
   onSelectConversation,
   onNewConversation,
   onDeleteConversation,
+  onRestoreConversation,
   selectedModel,
   onModelChange,
   models,
@@ -159,6 +162,13 @@ export function ChatSidebar({
             )}
           </div>
         </ScrollArea>
+      </div>
+
+      {/* Conversations sauvegardées */}
+      <div className="p-4 border-t border-sidebar-border">
+        <SavedConversations
+          onRestoreConversation={onRestoreConversation || (() => {})}
+        />
       </div>
 
       {/* Footer */}

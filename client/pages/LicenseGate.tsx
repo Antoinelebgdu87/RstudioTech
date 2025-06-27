@@ -1,11 +1,14 @@
 import { useState } from "react";
 
-function App() {
+interface LicenseGateProps {
+  onLicenseValidated: (licenseData: any) => void;
+}
+
+export default function LicenseGate({ onLicenseValidated }: LicenseGateProps) {
   const [licenseKey, setLicenseKey] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const validateLicense = async () => {
     if (!licenseKey.trim()) {
@@ -30,12 +33,15 @@ function App() {
 
       if (data.success && data.user && data.license) {
         setSuccess("✅ Licence validée avec succès !");
+
+        // Stocker les données d'authentification
         localStorage.setItem("license_key", licenseKey.trim());
         localStorage.setItem("user_data", JSON.stringify(data.user));
         localStorage.setItem("license_data", JSON.stringify(data.license));
 
+        // Petite pause pour montrer le succès puis rediriger
         setTimeout(() => {
-          setIsAuthenticated(true);
+          onLicenseValidated(data);
         }, 1500);
       } else {
         setError(data.error || "Licence invalide");
@@ -48,93 +54,16 @@ function App() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     validateLicense();
   };
 
-  if (isAuthenticated) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "20px",
-        }}
-      >
-        <div
-          style={{
-            background: "white",
-            borderRadius: "20px",
-            padding: "40px",
-            textAlign: "center",
-            maxWidth: "600px",
-          }}
-        >
-          <div style={{ fontSize: "60px", marginBottom: "20px" }}>🎉</div>
-          <h1
-            style={{
-              fontSize: "36px",
-              fontWeight: "bold",
-              marginBottom: "20px",
-              background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Bienvenue dans RStudio Tech IA !
-          </h1>
-          <p style={{ fontSize: "18px", color: "#666", marginBottom: "30px" }}>
-            Votre licence a été validée avec succès. Vous avez maintenant accès
-            à toutes les fonctionnalités de l'IA.
-          </p>
-          <div
-            style={{ display: "flex", gap: "15px", justifyContent: "center" }}
-          >
-            <button
-              style={{
-                background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-                color: "white",
-                border: "none",
-                padding: "15px 30px",
-                borderRadius: "10px",
-                fontSize: "16px",
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
-            >
-              💬 Commencer à chatter
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem("license_key");
-                localStorage.removeItem("user_data");
-                localStorage.removeItem("license_data");
-                setIsAuthenticated(false);
-                setLicenseKey("");
-                setSuccess("");
-              }}
-              style={{
-                background: "#f3f4f6",
-                color: "#374151",
-                border: "none",
-                padding: "15px 30px",
-                borderRadius: "10px",
-                fontSize: "16px",
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
-            >
-              🚪 Déconnexion
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      validateLicense();
+    }
+  };
 
   return (
     <div
@@ -143,7 +72,7 @@ function App() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         padding: "20px",
       }}
     >
@@ -165,7 +94,7 @@ function App() {
               height: "80px",
               margin: "0 auto 20px",
               borderRadius: "50%",
-              background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -178,7 +107,7 @@ function App() {
             style={{
               fontSize: "32px",
               fontWeight: "bold",
-              background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               marginBottom: "10px",
@@ -208,6 +137,7 @@ function App() {
               type="text"
               value={licenseKey}
               onChange={(e) => setLicenseKey(e.target.value)}
+              onKeyPress={handleKeyPress}
               disabled={isValidating}
               placeholder="Saisissez votre clé..."
               style={{
@@ -219,7 +149,6 @@ function App() {
                 textAlign: "center",
                 fontFamily: "monospace",
                 backgroundColor: isValidating ? "#f5f5f5" : "white",
-                boxSizing: "border-box",
               }}
             />
           </div>
@@ -266,7 +195,7 @@ function App() {
               background:
                 isValidating || !licenseKey.trim()
                   ? "#9ca3af"
-                  : "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                  : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
               color: "white",
               border: "none",
               borderRadius: "10px",
@@ -329,11 +258,16 @@ function App() {
                 background:
                   licenseKey === license.key ? "#e0e7ff" : "transparent",
               }}
+              onMouseOver={(e) => (e.target.style.background = "#e2e8f0")}
+              onMouseOut={(e) =>
+                (e.target.style.background =
+                  licenseKey === license.key ? "#e0e7ff" : "transparent")
+              }
             >
               <div>
                 <span
                   style={{
-                    background: "#4f46e5",
+                    background: "#667eea",
                     color: "white",
                     padding: "2px 8px",
                     borderRadius: "4px",
@@ -375,5 +309,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
