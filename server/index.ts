@@ -31,6 +31,10 @@ import {
   handleBulkCreateLicenses,
   requireAdmin,
 } from "./routes/admin";
+import {
+  handleCreateTestLicenses,
+  handleCheckTestLicenses,
+} from "./routes/test-setup";
 
 export function createServer() {
   const app = express();
@@ -98,6 +102,10 @@ export function createServer() {
   );
   app.get("/api/admin/users", requireAdmin, handleGetAllUsers);
   app.post("/api/admin/licenses/bulk", requireAdmin, handleBulkCreateLicenses);
+
+  // Test setup routes (pour développement)
+  app.post("/api/test/create-licenses", handleCreateTestLicenses);
+  app.get("/api/test/check-licenses", handleCheckTestLicenses);
 
   return app;
 }
