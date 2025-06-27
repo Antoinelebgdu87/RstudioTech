@@ -338,6 +338,12 @@ export default function Admin() {
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline">Admin</Badge>
+            <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground">
+              <span>Raccourci:</span>
+              <div className="inline-flex items-center gap-1 px-2 py-1 bg-muted rounded font-mono">
+                <span>Ctrl+F1</span>
+              </div>
+            </div>
             <Button
               variant="outline"
               size="sm"
