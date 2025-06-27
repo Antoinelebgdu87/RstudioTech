@@ -15,6 +15,7 @@ import {
   UserIcon,
   ShieldIcon,
   InfoIcon,
+  KeyboardIcon,
 } from "lucide-react";
 
 export default function DevInfo() {
