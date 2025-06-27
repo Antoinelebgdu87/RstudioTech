@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LicenseChecker } from "./components/ui/license-checker";
+import { toast } from "sonner";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
@@ -26,14 +27,26 @@ function GlobalKeyboardShortcuts() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl+F1 pour accéder au panel admin (seulement si authentifié)
+      // Ctrl+F1 pour accéder au panel admin
       if (event.ctrlKey && event.key === "F1") {
         event.preventDefault();
+
         if (isAuthenticated) {
-          window.location.href = "/admin";
+          toast.success("🚀 Redirection vers le panel admin...", {
+            description: "Raccourci Ctrl+F1 activé",
+            duration: 2000,
+          });
+          setTimeout(() => {
+            window.location.href = "/admin";
+          }, 500);
         } else {
-          // Si pas authentifié, aller d'abord sur login
-          window.location.href = "/login";
+          toast.info("🔐 Authentification requise", {
+            description: "Redirection vers la page de connexion",
+            duration: 2000,
+          });
+          setTimeout(() => {
+            window.location.href = "/login?redirect=/admin";
+          }, 500);
         }
       }
     };
