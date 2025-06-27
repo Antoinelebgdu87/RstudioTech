@@ -563,6 +563,7 @@ export function ChatInterface() {
             onSelectConversation={handleSelectConversation}
             onNewConversation={handleNewConversation}
             onDeleteConversation={handleDeleteConversation}
+            onRestoreConversation={restoreConversation}
             selectedModel={selectedModel}
             onModelChange={setSelectedModel}
             models={models}
