@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useAuthenticatedFetch } from "../../hooks/use-auth";
+import { useAuth, useAuthenticatedFetch } from "../../hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { Alert, AlertDescription } from "./alert";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { Progress } from "./progress";
+import { KeyboardShortcutsHelp } from "./keyboard-shortcuts-help";
 import {
   AlertTriangleIcon,
   CheckCircleIcon,
@@ -13,6 +13,7 @@ import {
   KeyIcon,
   TrendingUpIcon,
   ClockIcon,
+} from "lucide-react";
 } from "lucide-react";
 
 interface LicenseCheckerProps {
@@ -212,7 +213,7 @@ export function LicenseChecker({
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col relative">
       {/* Barre d'état de la licence */}
       <div className="border-b bg-background/95 backdrop-blur p-2">
         <div className="flex items-center justify-between text-sm">
@@ -274,6 +275,9 @@ export function LicenseChecker({
 
       {/* Contenu principal */}
       <div className="flex-1 min-h-0">{children}</div>
+
+      {/* Aide pour les raccourcis clavier */}
+      <KeyboardShortcutsHelp />
     </div>
   );
 }
