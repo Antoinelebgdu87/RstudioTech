@@ -21,31 +21,31 @@ import {
 export default function DevInfo() {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  // Clés de licence de test pré-générées
+  // Clés de licence de test simples et faciles à retenir
   const testLicenses = [
     {
-      key: "trial-demo-key-123456789",
+      key: "test-trial-123",
       type: "trial",
       maxUsage: 100,
       description: "Licence d'essai - 100 messages",
       color: "bg-orange-100 text-orange-800",
     },
     {
-      key: "basic-demo-key-987654321",
+      key: "test-basic-456",
       type: "basic",
       maxUsage: 1000,
       description: "Licence basique - 1000 messages",
       color: "bg-blue-100 text-blue-800",
     },
     {
-      key: "premium-demo-key-456789123",
+      key: "test-premium-789",
       type: "premium",
       maxUsage: 10000,
       description: "Licence premium - 10000 messages",
       color: "bg-purple-100 text-purple-800",
     },
     {
-      key: "unlimited-demo-key-321654987",
+      key: "test-unlimited-000",
       type: "unlimited",
       maxUsage: 999999,
       description: "Licence illimitée",
