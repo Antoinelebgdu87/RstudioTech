@@ -14,7 +14,6 @@ import {
   TrendingUpIcon,
   ClockIcon,
 } from "lucide-react";
-} from "lucide-react";
 
 interface LicenseCheckerProps {
   children: React.ReactNode;
