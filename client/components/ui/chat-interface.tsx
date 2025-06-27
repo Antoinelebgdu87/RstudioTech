@@ -8,7 +8,8 @@ import {
   ConversationsResponse,
 } from "@shared/api";
 import { apiFallback } from "@/lib/api-fallback";
-import { useAuth, useAuthenticatedFetch } from "../../hooks/use-auth";
+import { useAuth } from "../../contexts/AuthContext";
+import { useAuthenticatedFetch } from "../../hooks/use-auth";
 import { FirebaseService } from "../../../server/firebase-config";
 
 import { ChatSidebar } from "./chat-sidebar";

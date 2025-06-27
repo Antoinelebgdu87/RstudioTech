@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAuth, useAuthenticatedFetch } from "../../hooks/use-auth";
+import { useAuth } from "../../contexts/AuthContext";
+import { useAuthenticatedFetch } from "../../hooks/use-auth";
 import { Button } from "./button";
 import { ScrollArea } from "./scroll-area";
 import { Badge } from "./badge";

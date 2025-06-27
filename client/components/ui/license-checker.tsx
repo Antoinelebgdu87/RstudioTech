@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth, useAuthenticatedFetch } from "../../hooks/use-auth";
+import { useAuth } from "../../contexts/AuthContext";
+import { useAuthenticatedFetch } from "../../hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { Alert, AlertDescription } from "./alert";
 import { Badge } from "./badge";
