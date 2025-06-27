@@ -91,29 +91,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 // Composant pour rediriger les utilisateurs authentifiés loin de login
 function LoginRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const location = useLocation();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-brand-accent flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-          <p className="text-muted-foreground">Vérification de la licence...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated) {
-    // Si déjà authentifié, rediriger vers la page demandée ou l'accueil
-    const searchParams = new URLSearchParams(location.search);
-    const redirect = searchParams.get("redirect") || "/";
-    return <Navigate to={redirect} replace />;
-  }
-
   return <Login />;
 }
 
