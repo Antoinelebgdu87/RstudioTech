@@ -271,12 +271,22 @@ export default function DevInfo() {
             <div className="space-y-2">
               <h4 className="font-semibold">1. Test du système de licences</h4>
               <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-4">
-                <li>Copiez une clé de licence ci-dessus</li>
                 <li>
-                  Allez sur <code>/login</code> pour vous authentifier
+                  <strong>Cliquez sur "Créer les licences de test"</strong>{" "}
+                  ci-dessus
                 </li>
-                <li>Utilisez l'IA et observez le décompte d'usage</li>
-                <li>Testez la sauvegarde des conversations</li>
+                <li>
+                  Copiez une clé de licence (ex: <code>test-trial-123</code>)
+                </li>
+                <li>
+                  Allez sur <code>/</code> → redirection automatique vers{" "}
+                  <code>/login</code>
+                </li>
+                <li>Entrez votre clé de licence → accès à l'IA</li>
+                <li>Testez l'IA et observez le décompte d'usage</li>
+                <li>
+                  Utilisez <code>Ctrl+F1</code> pour l'admin panel
+                </li>
               </ul>
             </div>
 
