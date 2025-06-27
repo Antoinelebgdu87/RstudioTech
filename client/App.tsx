@@ -8,6 +8,7 @@ import { LicenseChecker } from "./components/ui/license-checker";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import DevInfo from "./pages/DevInfo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/dev-info" element={<DevInfo />} />
             <Route
               path="/"
               element={
