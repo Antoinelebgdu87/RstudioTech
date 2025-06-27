@@ -20,6 +20,8 @@ import {
 
 export default function DevInfo() {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [isCreatingLicenses, setIsCreatingLicenses] = useState(false);
+  const [licenseStatus, setLicenseStatus] = useState<string>("");
 
   // Clés de licence de test simples et faciles à retenir
   const testLicenses = [
@@ -63,6 +65,31 @@ export default function DevInfo() {
     }
   };
 
+  const createTestLicenses = async () => {
+    setIsCreatingLicenses(true);
+    setLicenseStatus("Création des licences de test...");
+
+    try {
+      const response = await fetch("/api/test/create-licenses", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setLicenseStatus(
+          `✅ ${result.licenses.length} licences créées avec succès !`,
+        );
+      } else {
+        setLicenseStatus("❌ Erreur lors de la création des licences");
+      }
+    } catch (error) {
+      setLicenseStatus("❌ Erreur de connexion au serveur");
+    } finally {
+      setIsCreatingLicenses(false);
+      setTimeout(() => setLicenseStatus(""), 5000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -89,6 +116,27 @@ export default function DevInfo() {
             <CardDescription>
               Utilisez ces clés pour tester le système d'authentification
             </CardDescription>
+            <div className="flex items-center gap-4 mt-4">
+              <Button
+                onClick={createTestLicenses}
+                disabled={isCreatingLicenses}
+                size="sm"
+              >
+                {isCreatingLicenses ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Création...
+                  </>
+                ) : (
+                  "🔧 Créer les licences de test"
+                )}
+              </Button>
+              {licenseStatus && (
+                <span className="text-sm text-muted-foreground">
+                  {licenseStatus}
+                </span>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {testLicenses.map((license) => (
