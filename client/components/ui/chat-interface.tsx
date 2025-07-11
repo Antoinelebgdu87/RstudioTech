@@ -310,27 +310,11 @@ export function ChatInterface() {
         </div>
         <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-brand-accent bg-clip-text text-transparent">
           Bienvenue sur RStudio Tech IA
-          {apiAvailable === false && (
-            <span className="block text-sm font-normal text-orange-500 mt-2">
-              🎭 Mode Démonstration
-            </span>
-          )}
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          {apiAvailable === false ? (
-            <>
-              <span className="text-orange-400">Mode démo activé</span> - L'API
-              est temporairement indisponible.
-              <br />
-              Vous pouvez toujours tester l'interface et recevoir des réponses
-              intelligentes !
-            </>
-          ) : (
-            <>
-              Assistant IA ultra-rapide et intelligent. Réponses instantanées et
-              utilisation gratuite.
-            </>
-          )}
+          Assistant IA ultra-rapide et intelligent propulsé par OpenRouter.
+          <br />
+          Réponses instantanées avec les meilleurs modèles d'IA disponibles.
         </p>
 
         <div className="flex gap-2 mb-8">
