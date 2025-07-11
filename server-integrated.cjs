@@ -143,11 +143,18 @@ app.post("/api/chat", async (req, res) => {
     console.log("🔑 Tentative avec OpenRouter...");
 
     try {
-      // Préparer les messages pour OpenRouter
-      const messages = conv.messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
+      // Préparer les messages pour OpenRouter avec message système français
+      const messages = [
+        {
+          role: "system",
+          content:
+            "Tu es un assistant IA français. Tu DOIS OBLIGATOIREMENT répondre UNIQUEMENT en français. Ne réponds JAMAIS en anglais ou dans une autre langue. Sois utile, précis et toujours en français.",
+        },
+        ...conv.messages.map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        })),
+      ];
 
       const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
         method: "POST",
