@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 // Configuration OpenRouter depuis les variables d'environnement
 const OPENROUTER_API_KEY =
   process.env.OPENROUTER_API_KEY ||
-  "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";
+  "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";
 const OPENROUTER_BASE_URL =
   process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
 const NODE_ENV = process.env.NODE_ENV || "development";
