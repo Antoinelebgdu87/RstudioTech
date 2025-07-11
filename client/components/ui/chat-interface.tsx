@@ -7,9 +7,6 @@ import {
   ModelsResponse,
   ConversationsResponse,
 } from "@shared/api";
-import { apiFallback } from "@/lib/api-fallback";
-import { useAuth } from "../../contexts/AuthContext";
-import { useAuthenticatedFetch } from "../../hooks/use-auth";
 
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessage } from "./chat-message";
@@ -23,17 +20,10 @@ import {
   SparklesIcon,
   ZapIcon,
   MessageSquareIcon,
-  SaveIcon,
-  CloudIcon,
-  AlertCircleIcon,
-  DownloadIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ChatInterface() {
-  const { user, license, isAuthenticated } = useAuth();
-  const { makeAuthenticatedRequest } = useAuthenticatedFetch();
-
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] =
     useState<Conversation | null>(null);
@@ -51,13 +41,6 @@ export function ChatInterface() {
   const [apiAvailable, setApiAvailable] = useState<boolean | null>(null);
   const [isCheckingAPI, setIsCheckingAPI] = useState(true);
 
-  // États pour la sauvegarde
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<
-    "idle" | "saving" | "saved" | "error"
-  >("idle");
-  const [savedConversations, setSavedConversations] = useState<any[]>([]);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages arrive
@@ -69,37 +52,25 @@ export function ChatInterface() {
     scrollToBottom();
   }, [currentConversation?.messages]);
 
-  // Vérifier la disponibilité de l'API au démarrage
+  // Initialiser l'API directement (pas de fallback)
   useEffect(() => {
-    checkAPIAndLoadData();
+    loadAPIData();
   }, []);
 
-  const checkAPIAndLoadData = async () => {
+  const loadAPIData = async () => {
     setIsCheckingAPI(true);
-    console.log("🔍 Vérification de la disponibilité de l'API...");
+    console.log("🔍 Initialisation de l'API OpenRouter...");
 
     try {
-      const isAPIAvailable = await apiFallback.checkAPIHealth();
-      setApiAvailable(isAPIAvailable);
-
-      if (isAPIAvailable) {
-        console.log("✅ API disponible, chargement des données...");
-        await loadConversations();
-        await loadModels();
-      } else {
-        console.log("🔄 API indisponible, utilisation du mode démo");
-        // Charger les données de démonstration
-        const demoModels = apiFallback.getModels();
-        setModels(demoModels.models);
-        const demoConversations = apiFallback.getConversations();
-        setConversations(demoConversations.conversations);
-      }
+      // Forcer l'utilisation de l'API réelle
+      setApiAvailable(true);
+      console.log("✅ API OpenRouter activée, chargement des données...");
+      await loadConversations();
+      await loadModels();
     } catch (error) {
-      console.error("❌ Erreur lors de la vérification de l'API:", error);
-      setApiAvailable(false);
-      // Utiliser le fallback en cas d'erreur
-      const demoModels = apiFallback.getModels();
-      setModels(demoModels.models);
+      console.error("❌ Erreur lors du chargement:", error);
+      // Même en cas d'erreur, utiliser l'API réelle
+      setApiAvailable(true);
     } finally {
       setIsCheckingAPI(false);
     }
@@ -132,15 +103,6 @@ export function ChatInterface() {
   };
 
   const sendMessageToAPI = async (message: string) => {
-    // Vérifier la licence avant d'envoyer
-    if (!license || !isAuthenticated) {
-      throw new Error("Licence requise pour utiliser l'IA");
-    }
-
-    if (license.usageCount >= license.maxUsage) {
-      throw new Error("Limite d'usage atteinte pour votre licence");
-    }
-
     const chatRequest = {
       message,
       conversationId: currentConversation?.id,
@@ -149,8 +111,7 @@ export function ChatInterface() {
 
     console.log("Envoi du message...", chatRequest);
 
-    // Utiliser la requête authentifiée pour inclure la licence
-    const response = await makeAuthenticatedRequest("/api/chat", {
+    const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -219,16 +180,9 @@ export function ChatInterface() {
       // Scroll vers le bas pour voir l'indicateur de frappe
       scrollToBottom();
 
-      let data;
-
-      // Utiliser l'API ou le fallback selon la disponibilité
-      if (apiAvailable) {
-        console.log("📡 Utilisation de l'API réelle...");
-        data = await sendMessageToAPI(message);
-      } else {
-        console.log("🎭 Utilisation du mode démonstration...");
-        data = await apiFallback.simulateChat(message, currentConversation?.id);
-      }
+      // Toujours utiliser l'API réelle OpenRouter
+      console.log("📡 Envoi vers l'API OpenRouter...");
+      const data = await sendMessageToAPI(message);
 
       // Ajouter directement la réponse IA à la conversation courante
       if (currentConversation) {
@@ -286,27 +240,16 @@ export function ChatInterface() {
 
   const handleNewConversation = async () => {
     try {
-      let newConversation;
-
-      if (apiAvailable) {
-        const response = await fetch("/api/conversations/new", {
-          method: "POST",
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        newConversation = await response.json();
-      } else {
-        // Mode démonstration
-        newConversation = apiFallback.createNewConversation();
-      }
+      const response = await fetch("/api/conversations/new", {
+        method: "POST",
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const newConversation = await response.json();
 
       setCurrentConversation(newConversation);
       setConversations((prev) => [newConversation, ...prev]);
     } catch (error) {
       console.error("Échec de la création d'une nouvelle conversation:", error);
-      // Fallback en cas d'erreur
-      const newConversation = apiFallback.createNewConversation();
-      setCurrentConversation(newConversation);
-      setConversations((prev) => [newConversation, ...prev]);
     }
   };
 
@@ -358,98 +301,6 @@ export function ChatInterface() {
     }
   };
 
-  // Fonctions de sauvegarde
-  const saveConversation = async () => {
-    if (!currentConversation || !user || !isAuthenticated) {
-      console.warn(
-        "Impossible de sauvegarder : pas de conversation ou utilisateur non authentifié",
-      );
-      return;
-    }
-
-    try {
-      setIsSaving(true);
-      setSaveStatus("saving");
-
-      const response = await makeAuthenticatedRequest(
-        "/api/save/conversation",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            conversation: currentConversation,
-            userId: user.id,
-          }),
-        },
-      );
-
-      if (response.ok) {
-        setSaveStatus("saved");
-        console.log("✅ Conversation sauvegardée avec succès");
-
-        // Actualiser la liste des conversations sauvegardées
-        loadSavedConversations();
-
-        // Reset du statut après 2 secondes
-        setTimeout(() => setSaveStatus("idle"), 2000);
-      } else {
-        throw new Error("Erreur lors de la sauvegarde");
-      }
-    } catch (error) {
-      console.error("❌ Erreur sauvegarde:", error);
-      setSaveStatus("error");
-      setTimeout(() => setSaveStatus("idle"), 3000);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const loadSavedConversations = async () => {
-    if (!user || !isAuthenticated) return;
-
-    try {
-      const response = await makeAuthenticatedRequest(
-        `/api/save/conversations/${user.id}`,
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setSavedConversations(data.conversations || []);
-      }
-    } catch (error) {
-      console.error("❌ Erreur chargement conversations sauvegardées:", error);
-    }
-  };
-
-  const restoreConversation = async (conversationId: string) => {
-    if (!user || !isAuthenticated) return;
-
-    try {
-      const response = await makeAuthenticatedRequest(
-        `/api/save/restore/${conversationId}/${user.id}`,
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.conversation) {
-          setCurrentConversation(data.conversation);
-          console.log("✅ Conversation restaurée");
-        }
-      }
-    } catch (error) {
-      console.error("❌ Erreur restauration:", error);
-    }
-  };
-
-  // Charger les conversations sauvegardées au démarrage
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      loadSavedConversations();
-    }
-  }, [isAuthenticated, user]);
-
   const EmptyState = () => (
     <div className="flex-1 flex items-center justify-center">
       <div className="text-center max-w-2xl mx-auto p-8">
@@ -458,27 +309,11 @@ export function ChatInterface() {
         </div>
         <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-brand-accent bg-clip-text text-transparent">
           Bienvenue sur RStudio Tech IA
-          {apiAvailable === false && (
-            <span className="block text-sm font-normal text-orange-500 mt-2">
-              🎭 Mode Démonstration
-            </span>
-          )}
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          {apiAvailable === false ? (
-            <>
-              <span className="text-orange-400">Mode démo activé</span> - L'API
-              est temporairement indisponible.
-              <br />
-              Vous pouvez toujours tester l'interface et recevoir des réponses
-              intelligentes !
-            </>
-          ) : (
-            <>
-              Assistant IA ultra-rapide et intelligent. Réponses instantanées,
-              utilisation illimitée et gratuite.
-            </>
-          )}
+          Assistant IA ultra-rapide et intelligent propulsé par OpenRouter.
+          <br />
+          Réponses instantanées avec les meilleurs modèles d'IA disponibles.
         </p>
 
         <div className="flex gap-2 mb-8">
@@ -506,7 +341,7 @@ export function ChatInterface() {
             <ZapIcon className="w-6 h-6 text-brand-accent mb-2" />
             <h3 className="font-semibold mb-1">Modèles Multiples</h3>
             <p className="text-sm text-muted-foreground">
-              Choisissez parmi divers modèles IA pour diff��rentes tâches
+              Choisissez parmi divers modèles IA pour différentes tâches
             </p>
           </div>
           <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
@@ -563,7 +398,7 @@ export function ChatInterface() {
             onSelectConversation={handleSelectConversation}
             onNewConversation={handleNewConversation}
             onDeleteConversation={handleDeleteConversation}
-            onRestoreConversation={restoreConversation}
+            onRestoreConversation={() => {}}
             selectedModel={selectedModel}
             onModelChange={setSelectedModel}
             models={models}
@@ -605,82 +440,13 @@ export function ChatInterface() {
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            {/* Bouton de sauvegarde */}
-            {currentConversation &&
-              currentConversation.messages.length > 0 &&
-              isAuthenticated && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={saveConversation}
-                  disabled={isSaving}
-                  className={`${
-                    saveStatus === "saved"
-                      ? "bg-green-50 border-green-200"
-                      : saveStatus === "error"
-                        ? "bg-red-50 border-red-200"
-                        : ""
-                  }`}
-                >
-                  {isSaving ? (
-                    <>
-                      <div className="w-3 h-3 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      Sauvegarde...
-                    </>
-                  ) : saveStatus === "saved" ? (
-                    <>
-                      <CloudIcon className="w-3 h-3 mr-2 text-green-600" />
-                      Sauvegardé
-                    </>
-                  ) : saveStatus === "error" ? (
-                    <>
-                      <AlertCircleIcon className="w-3 h-3 mr-2 text-red-600" />
-                      Erreur
-                    </>
-                  ) : (
-                    <>
-                      <SaveIcon className="w-3 h-3 mr-2" />
-                      Sauvegarder
-                    </>
-                  )}
-                </Button>
-              )}
-
             <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  apiAvailable === true
-                    ? "bg-green-400"
-                    : apiAvailable === false
-                      ? "bg-orange-400"
-                      : "bg-gray-400"
-                }`}
-              ></div>
+              <div className="w-2 h-2 rounded-full bg-green-400"></div>
               <span>
-                {apiAvailable === false
-                  ? "Mode Démo"
-                  : models.find((m) => m.id === selectedModel)?.name ||
-                    "Modèle IA"}
+                {models.find((m) => m.id === selectedModel)?.name ||
+                  "OpenRouter API"}
               </span>
             </div>
-
-            {/* Indicateur de licence */}
-            {isAuthenticated && license && (
-              <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground">
-                <div
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    license.usageCount >= license.maxUsage
-                      ? "bg-red-400"
-                      : license.usageCount / license.maxUsage > 0.8
-                        ? "bg-orange-400"
-                        : "bg-green-400"
-                  }`}
-                ></div>
-                <span>
-                  {license.usageCount}/{license.maxUsage}
-                </span>
-              </div>
-            )}
           </div>
         </div>
 

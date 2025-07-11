@@ -7,14 +7,13 @@ import {
   ChatMessage,
   Conversation,
 } from "@shared/api";
-import { FirebaseService } from "../firebase-config";
 import { v4 as uuidv4 } from "uuid";
 
 // In-memory storage for conversations (in production, use a database)
 const conversations: Map<string, Conversation> = new Map();
 
 const OPENROUTER_API_KEY =
-  "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";
+  "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";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
 // Modèles gratuits disponibles sur OpenRouter
@@ -60,25 +59,6 @@ export const handleChat: RequestHandler = async (req, res) => {
       "API Key prefix:",
       OPENROUTER_API_KEY?.substring(0, 15) + "...",
     );
-
-    // Vérifier la licence si fournie
-    const licenseKey = req.headers["x-license-key"] as string;
-    if (licenseKey) {
-      const validation = await FirebaseService.validateLicense(licenseKey);
-      if (!validation.valid) {
-        return res.status(401).json({
-          error: validation.error || "Licence invalide",
-        });
-      }
-
-      // Vérifier la limite d'usage
-      const license = validation.license;
-      if (license.usageCount >= license.maxUsage) {
-        return res.status(403).json({
-          error: "Limite d'usage atteinte pour votre licence",
-        });
-      }
-    }
 
     const {
       message,
@@ -170,11 +150,6 @@ export const handleChat: RequestHandler = async (req, res) => {
 
     // Save conversation
     conversations.set(finalConversationId, conversation);
-
-    // Incrémenter l'usage de la licence si applicable
-    if (licenseKey) {
-      await FirebaseService.incrementUsage(licenseKey);
-    }
 
     const chatResponse: ChatResponse = {
       message: assistantMessage,

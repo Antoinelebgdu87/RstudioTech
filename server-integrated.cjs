@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 // Configuration OpenRouter depuis les variables d'environnement
 const OPENROUTER_API_KEY =
   process.env.OPENROUTER_API_KEY ||
-  "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";
+  "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";
 const OPENROUTER_BASE_URL =
   process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
 const NODE_ENV = process.env.NODE_ENV || "development";
@@ -143,11 +143,18 @@ app.post("/api/chat", async (req, res) => {
     console.log("🔑 Tentative avec OpenRouter...");
 
     try {
-      // Préparer les messages pour OpenRouter
-      const messages = conv.messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
+      // Préparer les messages pour OpenRouter avec message système français
+      const messages = [
+        {
+          role: "system",
+          content:
+            "Tu es un assistant IA français. Tu DOIS OBLIGATOIREMENT répondre UNIQUEMENT en français. Ne réponds JAMAIS en anglais ou dans une autre langue. Sois utile, précis et toujours en français.",
+        },
+        ...conv.messages.map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        })),
+      ];
 
       const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
         method: "POST",
