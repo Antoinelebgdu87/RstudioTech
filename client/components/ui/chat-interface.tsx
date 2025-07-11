@@ -53,37 +53,25 @@ export function ChatInterface() {
     scrollToBottom();
   }, [currentConversation?.messages]);
 
-  // Vérifier la disponibilité de l'API au démarrage
+  // Initialiser l'API directement (pas de fallback)
   useEffect(() => {
-    checkAPIAndLoadData();
+    loadAPIData();
   }, []);
 
-  const checkAPIAndLoadData = async () => {
+  const loadAPIData = async () => {
     setIsCheckingAPI(true);
-    console.log("🔍 Vérification de la disponibilité de l'API...");
+    console.log("🔍 Initialisation de l'API OpenRouter...");
 
     try {
-      const isAPIAvailable = await apiFallback.checkAPIHealth();
-      setApiAvailable(isAPIAvailable);
-
-      if (isAPIAvailable) {
-        console.log("✅ API disponible, chargement des données...");
-        await loadConversations();
-        await loadModels();
-      } else {
-        console.log("🔄 API indisponible, utilisation du mode démo");
-        // Charger les données de démonstration
-        const demoModels = apiFallback.getModels();
-        setModels(demoModels.models);
-        const demoConversations = apiFallback.getConversations();
-        setConversations(demoConversations.conversations);
-      }
+      // Forcer l'utilisation de l'API réelle
+      setApiAvailable(true);
+      console.log("✅ API OpenRouter activée, chargement des données...");
+      await loadConversations();
+      await loadModels();
     } catch (error) {
-      console.error("❌ Erreur lors de la vérification de l'API:", error);
-      setApiAvailable(false);
-      // Utiliser le fallback en cas d'erreur
-      const demoModels = apiFallback.getModels();
-      setModels(demoModels.models);
+      console.error("❌ Erreur lors du chargement:", error);
+      // Même en cas d'erreur, utiliser l'API réelle
+      setApiAvailable(true);
     } finally {
       setIsCheckingAPI(false);
     }
