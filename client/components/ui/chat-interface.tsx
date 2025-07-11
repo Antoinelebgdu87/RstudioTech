@@ -181,16 +181,9 @@ export function ChatInterface() {
       // Scroll vers le bas pour voir l'indicateur de frappe
       scrollToBottom();
 
-      let data;
-
-      // Utiliser l'API ou le fallback selon la disponibilité
-      if (apiAvailable) {
-        console.log("📡 Utilisation de l'API réelle...");
-        data = await sendMessageToAPI(message);
-      } else {
-        console.log("🎭 Utilisation du mode démonstration...");
-        data = await apiFallback.simulateChat(message, currentConversation?.id);
-      }
+      // Toujours utiliser l'API réelle OpenRouter
+      console.log("📡 Envoi vers l'API OpenRouter...");
+      const data = await sendMessageToAPI(message);
 
       // Ajouter directement la réponse IA à la conversation courante
       if (currentConversation) {
