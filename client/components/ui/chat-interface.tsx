@@ -442,20 +442,10 @@ export function ChatInterface() {
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  apiAvailable === true
-                    ? "bg-green-400"
-                    : apiAvailable === false
-                      ? "bg-orange-400"
-                      : "bg-gray-400"
-                }`}
-              ></div>
+              <div className="w-2 h-2 rounded-full bg-green-400"></div>
               <span>
-                {apiAvailable === false
-                  ? "Mode Démo"
-                  : models.find((m) => m.id === selectedModel)?.name ||
-                    "Modèle IA"}
+                {models.find((m) => m.id === selectedModel)?.name ||
+                  "OpenRouter API"}
               </span>
             </div>
           </div>
